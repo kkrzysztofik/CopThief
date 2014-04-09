@@ -4,45 +4,53 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Player {
-    protected boolean type; //True - cop, false - thief
+    protected Constants.ObjectTypes type; //True - cop, false - thief
     protected int timeLimit; //in ms
-    protected LinkedList<Integer> moves;
+    protected LinkedList<Constants.Direction> moves;
     protected int posX, posY;
 
-    public Player(boolean ttype, int ttimeLimit) {
-        this.type = ttype;
+    public Player(Constants.ObjectTypes ttype, int ttimeLimit) {
+        if(ttype == Constants.ObjectTypes.COP) {
+            this.type = ttype;
+        } else {
+            this.type = Constants.ObjectTypes.THIEF;
+        }
         this.timeLimit = ttimeLimit;
-        this.moves = new LinkedList<Integer>();
+        this.moves = new LinkedList<Constants.Direction>();
     }
 
     public Player(int ttimelimit) {
-        this.type = false;
+        this.type = Constants.ObjectTypes.THIEF;
         this.timeLimit = ttimelimit;
-        this.moves = new LinkedList<Integer>();
+        this.moves = new LinkedList<Constants.Direction>();
     }
 
-    public Player(boolean ttype) {
-        this.type = ttype;
+    public Player(Constants.ObjectTypes ttype) {
+        if(ttype == Constants.ObjectTypes.COP) {
+            this.type = ttype;
+        } else {
+            this.type = Constants.ObjectTypes.THIEF;
+        }
         this.timeLimit = 500;
-        this.moves = new LinkedList<Integer>();
+        this.moves = new LinkedList<Constants.Direction>();
     }
 
     public Player() {
-        this.type = false;
+        this.type = Constants.ObjectTypes.THIEF;
         this.timeLimit = 500;
-        this.moves = new LinkedList<Integer>();
+        this.moves = new LinkedList<Constants.Direction>();
     }
 
     public Player(Player toCopy) {
         this.type = toCopy.type;
         this.timeLimit = toCopy.timeLimit;
-        this.moves = new LinkedList<Integer>();
+        this.moves = new LinkedList<Constants.Direction>();
     }
-    public int getMove() {
+    public Constants.Direction getMove() {
         if(this.moves.size() > 0) {
             return this.moves.remove();
         } else {
-            return 0;
+            return Constants.Direction.STAY;
         }
     }
 
@@ -59,7 +67,7 @@ public class Player {
         return this.posY;
     }
 
-    public boolean getType() {
+    public Constants.ObjectTypes getType() {
         return this.type;
     }
 

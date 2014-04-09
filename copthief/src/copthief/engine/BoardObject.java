@@ -5,35 +5,44 @@ import java.util.List;
 import java.util.Random;
 
 public class BoardObject {
-    private boolean type; //0 - wall, 1 - gateway
+    private Constants.ObjectTypes type; //0 - wall, 1 - gateway
     private int sizeX, sizeY;
     private int posX, posY;
     private double movementChance;
     private double movementDirectionChange;
-    private int movementDirection; //1 - up, 2 - down, 3 - right, 4 - left, 0 - stay
+    private Constants.Direction movementDirection; //1 - up, 2 - down, 3 - right, 4 - left, 0 - stay
 
-    protected LinkedList<Integer> moves;
+    protected LinkedList<Constants.Direction> moves;
 
-    public BoardObject(boolean ttype, int sizeX, int sizeY, double movementChance, double movementDirectionChange) {
+    public BoardObject(Constants.ObjectTypes ttype, int sizeX, int sizeY, double movementChance, double movementDirectionChange) {
 
-        this.type = ttype;
+        if (ttype == Constants.ObjectTypes.GATEWAY) {
+            this.type = ttype;
+        } else {
+            this.type = Constants.ObjectTypes.WALL;
+        }
+
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.movementChance = movementChance;
         this.movementDirectionChange = movementDirectionChange;
 
         Random rn = new Random();
-        if(type) {
-            this.movementDirection = rn.nextInt(2);
+        if(type == Constants.ObjectTypes.GATEWAY) {
+            this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(3));
         } else {
-            this.movementDirection = rn.nextInt(4)+1;
+            this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(4)+1);
         }
 
-        this.moves = new LinkedList<Integer>();
+        this.moves = new LinkedList<Constants.Direction>();
     }
 
-    public BoardObject(boolean ttype, int sizeX, int sizeY) {
-        this.type = ttype;
+    public BoardObject(Constants.ObjectTypes ttype, int sizeX, int sizeY) {
+        if (ttype == Constants.ObjectTypes.GATEWAY) {
+            this.type = ttype;
+        } else {
+            this.type = Constants.ObjectTypes.WALL;
+        }
         this.sizeX = sizeX;
         this.sizeY = sizeY;
 
@@ -41,13 +50,13 @@ public class BoardObject {
         this.movementDirectionChange = 0.05;
 
         Random rn = new Random();
-        if(type) {
-            this.movementDirection = rn.nextInt(2);
+        if(type == Constants.ObjectTypes.GATEWAY) {
+            this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(3));
         } else {
-            this.movementDirection = rn.nextInt(4)+1;
+            this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(5));
         }
 
-        this.moves = new LinkedList<Integer>();
+        this.moves = new LinkedList<Constants.Direction>();
     }
 
     public BoardObject(BoardObject toCopy) {
@@ -58,14 +67,14 @@ public class BoardObject {
         this.movementDirectionChange = toCopy.movementDirectionChange;
         this.movementDirection = toCopy.movementDirection;
 
-        this.moves = new LinkedList<Integer>();
+        this.moves = new LinkedList<Constants.Direction>();
     }
 
-    public int getMove() {
+    public Constants.Direction getMove() {
         if(this.moves.size() > 0) {
             return this.moves.remove();
         } else {
-            return 0;
+            return Constants.Direction.STAY;
         }
     }
 
@@ -82,7 +91,7 @@ public class BoardObject {
         this.sizeX = sizeX;
     }
 
-    public boolean getType() {
+    public Constants.ObjectTypes getType() {
         return this.type;
     }
 
@@ -111,42 +120,42 @@ public class BoardObject {
             double d = rn.nextDouble();     // random value in range 0.0 - 1.0
             if (d <= this.movementChance) {
                 d = rn.nextDouble();
-                if (!this.type) {
+                if (this.type == Constants.ObjectTypes.WALL) {
                     if (d <= this.movementDirectionChange) {
-                        this.movementDirection = rn.nextInt(4) + 1; //(0-3) + 1 = 1-4
+                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(5)); //(0-3) + 1 = 1-4
                     }
 
                     switch(movementDirection) {
-                        case 1:
+                        case UP:
                             if(futureY + this.sizeY - 1 >= boardSize+1) {
-                                this.movementDirection = 2;
+                                this.movementDirection = Constants.Direction.DOWN;
                                 futureY -= 1;
                                 break;
                             }
                             futureY += 1;
                             break;
 
-                        case 2:
+                        case DOWN:
                             if(futureY <= 2) {
-                                this.movementDirection = 1;
+                                this.movementDirection = Constants.Direction.UP;
                                 futureY += 1;
                             }
 
                             futureY -= 1;
                             break;
 
-                        case 3:
+                        case LEFT:
                             if(futureX <= 2) {
-                                this.movementDirection = 4;
+                                this.movementDirection = Constants.Direction.RIGHT;
                                 futureX += 1;
                             }
 
                             futureX -= 1;
                             break;
 
-                        case 4:
+                        case RIGHT:
                             if(futureX + sizeX - 1 >= boardSize+1) {
-                                this.movementDirection = 3;
+                                this.movementDirection = Constants.Direction.LEFT;
                                 futureX -= 1;
                             }
 
@@ -158,20 +167,20 @@ public class BoardObject {
 
                 } else {
                     if (d <= this.movementDirectionChange) {
-                        this.movementDirection = rn.nextInt(2) + 1; //(0-1) + 1 = 1-2
+                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(2) + 1); //(0-1) + 1 = 1-2
                     }
 
                     switch (movementDirection) {
-                        case 1:
+                        case RIGHT:
                             //todo: gate movement
                             break;
-                        case 2:
+                        case LEFT:
                             break;
                     }
                     this.moves.push(this.movementDirection);
                 }
             } else {
-                this.moves.push(0);
+                this.moves.push(Constants.Direction.STAY);
             }
         }
     }

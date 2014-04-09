@@ -7,44 +7,45 @@ public class Board {
     private int size;
     public List<BoardObject> objects;
     public List<Player> players; //cops and thiefs
-    private int[][] board; //1 - wall, 2 - gateway, 3 - thief, 4 - cop, 0 - empty
+    private Constants.ObjectTypes[][] board; //1 - wall, 2 - gateway, 3 - thief, 4 - cop, 0 - empty
 
     public Board(int size, List<BoardObject> objects, List<Player> players){
         this.size = size+2;
         this.objects = objects;
         this.players = players;
-        this.board = new int[this.size][this.size];
+        this.board = new Constants.ObjectTypes[this.size][this.size];
 
         for(int i = 0; i < this.size; i++) {
             for(int j = 0; j < this.size; j++) {
-                board[i][j] = 0;
+                board[i][j] = Constants.ObjectTypes.EMPTY;
             }
         }
 
         for(int i = 0; i < this.size; i++) {
-            board[i][0] = 1;
-            board[i][size+1] = 1;
-            board[0][i] = 1;
-            board[0][size+1] = 1;
+            board[i][0] = Constants.ObjectTypes.WALL;
+            board[i][size+1] = Constants.ObjectTypes.WALL;
+            board[0][i] = Constants.ObjectTypes.WALL;
+            board[0][size+1] = Constants.ObjectTypes.WALL;
         }
     }
 
     public Board(int size){
         this.size = size+2;
-        this.board = new int[this.size][this.size];
+        this.board = new Constants.ObjectTypes[this.size][this.size];
 
         for(int i = 0; i < this.size; i++) {
             for(int j = 0; j < this.size; j++) {
-                board[i][j] = 0;
+                board[i][j] = Constants.ObjectTypes.EMPTY;
             }
         }
 
         for(int i = 0; i < this.size; i++) {
-            board[i][0] = 1;
-            board[i][this.size-1] = 1;
-            board[0][i] = 1;
-            board[this.size-1][i] = 1;
+            board[i][0] = Constants.ObjectTypes.WALL;
+            board[i][size+1] = Constants.ObjectTypes.WALL;
+            board[0][i] = Constants.ObjectTypes.WALL;
+            board[0][size+1] = Constants.ObjectTypes.WALL;
         }
+
         this.objects = new LinkedList<BoardObject>();
         this.players = new LinkedList<Player>();
     }
@@ -64,7 +65,7 @@ public class Board {
             this.players.add(new_plr);
         }
 
-        this.board = new int[size][size];
+        this.board = new Constants.ObjectTypes[size][size];
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -76,14 +77,14 @@ public class Board {
     public void refreshBoard() {
         //outer walls
         for(int i = 0; i < this.size; i++) {
-            board[i][0] = 1;
-            board[i][size-1] = 1;
-            board[0][i] = 1;
-            board[size-1][i] = 1;
+            board[i][0] = Constants.ObjectTypes.WALL;
+            board[i][size-1] = Constants.ObjectTypes.WALL;
+            board[0][i] = Constants.ObjectTypes.WALL;
+            board[size-1][i] = Constants.ObjectTypes.WALL;
         }
 
         for(BoardObject obj : objects) {
-            boolean objType = obj.getType();
+            Constants.ObjectTypes objType = obj.getType();
             int sizeX = obj.getSizeX(),
                 sizeY = obj.getSizeY(),
                 posX = obj.getPosX(),
@@ -91,21 +92,21 @@ public class Board {
 
             for(int i = 0; i < sizeX; i++) {
                 for(int j = 0; j < sizeY; j++) {
-                    if(objType) { //gateway
-                        board[posX+i][posY+j] = 2;
+                    if(objType == Constants.ObjectTypes.GATEWAY) { //gateway
+                        board[posX+i][posY+j] = Constants.ObjectTypes.GATEWAY;
                     } else { //wall
-                        board[posX+i][posY+j] = 1;
+                        board[posX+i][posY+j] = Constants.ObjectTypes.WALL;
                     }
                 }
             }
         }
 
         for(Player plr : players) {
-            boolean type = plr.getType();
-            if(type) { //cop
-                board[plr.getPosX()][plr.getPosY()] = 4;
+            Constants.ObjectTypes type = plr.getType();
+            if(type == Constants.ObjectTypes.COP) { //cop
+                board[plr.getPosX()][plr.getPosY()] = Constants.ObjectTypes.COP;
             } else { //thief
-                board[plr.getPosX()][plr.getPosY()] = 3;
+                board[plr.getPosX()][plr.getPosY()] = Constants.ObjectTypes.THIEF;
             }
         }
     }
@@ -123,35 +124,34 @@ public class Board {
         this.players = players;
         refreshBoard();
     }
-    public boolean checkIfCollide(int direction, int startX, int startY) {
-        boolean ret;
+    public boolean checkIfCollide(Constants.Direction direction, int startX, int startY, Constants.ObjectTypes type) {
         int new_posX = 0, new_posY = 0;
 
         switch (direction) {
-            case 0:
+            case STAY:
                 new_posX = startX;
                 new_posY = startY;
                 break;
-            case 1:
+            case RIGHT:
                 new_posX = startX+1;
                 new_posY = startY;
                 break;
-            case 2:
+            case LEFT:
                 new_posX = startX-1;
                 new_posY = startY;
                 break;
-            case 3:
+            case DOWN:
                 new_posX = startX;
                 new_posY = startY-1;
                 break;
-            case 4:
+            case UP:
                 new_posX = startX;
                 new_posY = startY+1;
                 break;
         }
 
         //check if in new field is wall, thief, cop
-        return !(board[new_posX][new_posY] == 0 || board[new_posX][new_posY] == 2);
+        return !(board[new_posX][new_posY] == Constants.ObjectTypes.EMPTY || board[new_posX][new_posY] == Constants.ObjectTypes.GATEWAY);
     }
 
     @Override
@@ -161,19 +161,19 @@ public class Board {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 switch (board[i][j]) {
-                    case 0:
+                    case EMPTY:
                         ret += " - ";
                         break;
-                    case 1:
+                    case WALL:
                         ret += " W ";
                         break;
-                    case 2:
+                    case GATEWAY:
                         ret += " G ";
                         break;
-                    case 3:
+                    case THIEF:
                         ret += " T ";
                         break;
-                    case 4:
+                    case COP:
                         ret += " C ";
                         break;
                 }

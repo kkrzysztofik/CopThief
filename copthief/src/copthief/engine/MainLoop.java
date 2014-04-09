@@ -127,7 +127,7 @@ public class MainLoop {
                     break;
             }
 
-            BoardObject obj = new BoardObject(true, sizeX, sizeY, gateMovementChance, gateMovementDirectionChange);
+            BoardObject obj = new BoardObject(Constants.ObjectTypes.GATEWAY, sizeX, sizeY, gateMovementChance, gateMovementDirectionChange);
             obj.setPos(posX, posY);
             gameBoard.objects.add(obj);
             gameBoard.refreshBoard();
@@ -152,7 +152,7 @@ public class MainLoop {
                 }
             }
 
-            BoardObject obj = new BoardObject(false, sizeX, sizeY, wallMovementChance, wallMovementDirectionChange);
+            BoardObject obj = new BoardObject(Constants.ObjectTypes.WALL, sizeX, sizeY, wallMovementChance, wallMovementDirectionChange);
             obj.setPos(posX, posY);
             gameBoard.objects.add(obj);
             gameBoard.refreshBoard();
@@ -160,11 +160,11 @@ public class MainLoop {
 
         //RandomAI for now
         for(int i = 0; i<cops; i++) {
-            Player cop = new RandomAI();
+            Player cop = new RandomAI(Constants.ObjectTypes.COP);
             int posX = rnd.nextInt(this.boardWidth)+1,
                 posY = rnd.nextInt(this.boardWidth)+1;
 
-            while(gameBoard.checkIfCollide(0, posX, posY)) { // until collides randomise new values
+            while(gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.COP)) { // until collides randomise new values
                 posX = rnd.nextInt(this.boardWidth)+1;
                 posY = rnd.nextInt(this.boardWidth)+1;
             }
@@ -176,11 +176,11 @@ public class MainLoop {
         }
 
         for(int i = 0; i<thieves; i++) {
-            Player thief = new RandomAI(false);
+            Player thief = new RandomAI(Constants.ObjectTypes.THIEF);
             int posX = rnd.nextInt(this.boardWidth)+1,
                 posY = rnd.nextInt(this.boardWidth)+1;
 
-            while(gameBoard.checkIfCollide(0, posX, posY)) {
+            while(gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.THIEF)) {
                 posX = rnd.nextInt(this.boardWidth)+1;
                 posY = rnd.nextInt(this.boardWidth)+1;
             }
@@ -192,7 +192,7 @@ public class MainLoop {
     }
 
     private void prepareMove() {
-        List<Board> lastList = new LinkedList<Board>();
+        List<Board> lastList;
         int visitedSize = this.visitedStates.size() - 1;
 
         if (this.visitedStates.size() >= this.k) {
@@ -212,71 +212,71 @@ public class MainLoop {
 
     private void makeMove() throws GameEndException {
         for(BoardObject obj : gameBoard.objects){
-            int movement = obj.getMove(),
-                posX = obj.getPosX(),
+            Constants.Direction movement = obj.getMove();
+            int posX = obj.getPosX(),
                 posY = obj.getPosY();
 
-            if(obj.getType()) { //wall
+            if(obj.getType() == Constants.ObjectTypes.WALL) { //wall
                 switch (movement) {
-                    case 0:
+                    case STAY:
                         //do nothing
                         break;
-                    case 1:
+                    case UP:
                         obj.setPos(posX, posY+1);
                         break;
-                    case 2:
+                    case DOWN:
                         obj.setPos(posX, posY-1);
                         break;
-                    case 3:
+                    case LEFT:
                         obj.setPos(posX-1, posY);
                         break;
-                    case 4:
+                    case RIGHT:
                         obj.setPos(posX+1, posY);
                         break;
                 }
                 // check if collide with players
             } else { //gateway
                 switch (movement) {
-                    case 0:
+                    case STAY:
                         //do nothing
                         break;
-                    case 1:
+                    case LEFT:
                         break;
-                    case 2:
+                    case RIGHT:
                         break;
                 }
             }
         }
 
         for(Player plr: gameBoard.players){
-            int movement = plr.getMove();
+            Constants.Direction movement = plr.getMove();
 
-            if(plr.getType()) { //cop
+            if(plr.getType() == Constants.ObjectTypes.COP) { //cop
                 switch (movement) {
-                    case 0:
+                    case STAY:
                         //do nothing
                         break;
-                    case 1:
+                    case UP:
                         break;
-                    case 2:
+                    case DOWN:
                         break;
-                    case 3:
+                    case RIGHT:
                         break;
-                    case 4:
+                    case LEFT:
                         break;
                 }
             } else { //thief
                 switch (movement) {
-                    case 0:
+                    case STAY:
                         //do nothing
                         break;
-                    case 1:
+                    case UP:
                         break;
-                    case 2:
+                    case DOWN:
                         break;
-                    case 3:
+                    case RIGHT:
                         break;
-                    case 4:
+                    case LEFT:
                         break;
                 }
             }
