@@ -59,6 +59,49 @@ public class Player {
         this.posY = posY;
     }
 
+    public void moveRandom(int posX, int posY, int boardSize) {
+        RandomSingleton rnd = RandomSingleton.getInstance();
+        Constants.Direction movementDirection = Constants.Direction.fromInteger(rnd.nextInt(4)+1);
+        switch(movementDirection) {
+            case UP:
+                if(posY + 1 >= boardSize) {
+                    posY -= 1;
+                    break;
+                }
+
+                posY += 1;
+                break;
+
+            case DOWN:
+                if(posY - 1 <= 2) {
+                    posY += 1;
+                    break;
+                }
+
+                posY -= 1;
+                break;
+
+            case LEFT:
+                if(posX <= 2) {
+                    posX += 1;
+                    break;
+                }
+
+                posX -= 1;
+                break;
+
+            case RIGHT:
+                if(posX + 1 >= boardSize) {
+                    posX -= 1;
+                    break;
+                }
+
+                posX += 1;
+                break;
+        }
+        this.setPos(posX, posY);
+    }
+
     public int getPosX(){
         return this.posX;
     }

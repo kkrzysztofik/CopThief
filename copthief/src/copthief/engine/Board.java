@@ -75,6 +75,12 @@ public class Board {
     }
 
     public void refreshBoard() {
+        for(int i = 0; i < this.size; i++) {
+            for(int j = 0; j < this.size; j++) {
+                board[i][j] = Constants.ObjectTypes.EMPTY;
+            }
+        }
+
         //outer walls
         for(int i = 0; i < this.size; i++) {
             board[i][0] = Constants.ObjectTypes.WALL;
@@ -148,6 +154,13 @@ public class Board {
                 new_posX = startX;
                 new_posY = startY+1;
                 break;
+        }
+        if(startX >= this.size || startY >= this.size) {
+            return true; //Cannot exceed board
+        }
+
+        if(board[new_posX][new_posY] == Constants.ObjectTypes.GATEWAY && type == Constants.ObjectTypes.COP) {
+            return true;
         }
 
         //check if in new field is wall, thief, cop

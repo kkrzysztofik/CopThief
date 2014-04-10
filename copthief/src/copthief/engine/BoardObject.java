@@ -27,7 +27,7 @@ public class BoardObject {
         this.movementChance = movementChance;
         this.movementDirectionChange = movementDirectionChange;
 
-        Random rn = new Random();
+        RandomSingleton rn = RandomSingleton.getInstance();
         if(type == Constants.ObjectTypes.GATEWAY) {
             this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(3));
         } else {
@@ -49,7 +49,7 @@ public class BoardObject {
         this.movementChance = 0.75;
         this.movementDirectionChange = 0.05;
 
-        Random rn = new Random();
+        RandomSingleton rn = RandomSingleton.getInstance();
         if(type == Constants.ObjectTypes.GATEWAY) {
             this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(3));
         } else {
@@ -109,7 +109,7 @@ public class BoardObject {
     }
 
     public void prepareMove(List<Board> stateList, int k) {
-        Random rn = new Random();
+        RandomSingleton rn = RandomSingleton.getInstance();
         Board last = stateList.get(stateList.size() - 1);
 
         int futureX = posX,
@@ -122,12 +122,12 @@ public class BoardObject {
                 d = rn.nextDouble();
                 if (this.type == Constants.ObjectTypes.WALL) {
                     if (d <= this.movementDirectionChange) {
-                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(5)); //(0-3) + 1 = 1-4
+                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(4)+1); //(0-3) + 1 = 1-4
                     }
 
                     switch(movementDirection) {
                         case UP:
-                            if(futureY + this.sizeY - 1 >= boardSize+1) {
+                            if(futureY + this.sizeY >= boardSize) {
                                 this.movementDirection = Constants.Direction.DOWN;
                                 futureY -= 1;
                                 break;
@@ -139,6 +139,7 @@ public class BoardObject {
                             if(futureY <= 2) {
                                 this.movementDirection = Constants.Direction.UP;
                                 futureY += 1;
+                                break;
                             }
 
                             futureY -= 1;
@@ -148,15 +149,17 @@ public class BoardObject {
                             if(futureX <= 2) {
                                 this.movementDirection = Constants.Direction.RIGHT;
                                 futureX += 1;
+                                break;
                             }
 
                             futureX -= 1;
                             break;
 
                         case RIGHT:
-                            if(futureX + sizeX - 1 >= boardSize+1) {
+                            if(futureX + sizeX >= boardSize) {
                                 this.movementDirection = Constants.Direction.LEFT;
                                 futureX -= 1;
+                                break;
                             }
 
                             futureX += 1;
