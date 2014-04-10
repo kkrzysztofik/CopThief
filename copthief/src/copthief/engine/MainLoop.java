@@ -292,12 +292,24 @@ public class MainLoop {
                         }
                         break;
                     case UP:
+                        if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, Constants.ObjectTypes.COP)) {
+                            plr.setPos(posX, posY+1);
+                        }
                         break;
                     case DOWN:
+                        if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, Constants.ObjectTypes.COP)) {
+                            plr.setPos(posX, posY-1);
+                        }
                         break;
                     case RIGHT:
+                        if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, Constants.ObjectTypes.COP)) {
+                            plr.setPos(posX, posY+1);
+                        }
                         break;
                     case LEFT:
+                        if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, Constants.ObjectTypes.COP)) {
+                            plr.setPos(posX-1, posY);
+                        }
                         break;
                 }
             } else { //thief
@@ -322,12 +334,24 @@ public class MainLoop {
                         }
                         break;
                     case UP:
+                        if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, Constants.ObjectTypes.THIEF)) {
+                            plr.setPos(posX, posY+1);
+                        }
                         break;
                     case DOWN:
+                        if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, Constants.ObjectTypes.THIEF)) {
+                            plr.setPos(posX, posY-1);
+                        }
                         break;
                     case RIGHT:
+                        if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, Constants.ObjectTypes.THIEF)) {
+                            plr.setPos(posX, posY+1);
+                        }
                         break;
                     case LEFT:
+                        if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, Constants.ObjectTypes.THIEF)) {
+                            plr.setPos(posX-1, posY);
+                        }
                         break;
                 }
             }
