@@ -4,26 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Player {
-    protected Constants.ObjectTypes type; //True - cop, false - thief
-    protected int timeLimit; //in ms
+    protected Constants.ObjectTypes type;
     protected LinkedList<Constants.Direction> moves;
     protected int posX, posY;
-
-    public Player(Constants.ObjectTypes ttype, int ttimeLimit) {
-        if(ttype == Constants.ObjectTypes.COP) {
-            this.type = ttype;
-        } else {
-            this.type = Constants.ObjectTypes.THIEF;
-        }
-        this.timeLimit = ttimeLimit;
-        this.moves = new LinkedList<Constants.Direction>();
-    }
-
-    public Player(int ttimelimit) {
-        this.type = Constants.ObjectTypes.THIEF;
-        this.timeLimit = ttimelimit;
-        this.moves = new LinkedList<Constants.Direction>();
-    }
 
     public Player(Constants.ObjectTypes ttype) {
         if(ttype == Constants.ObjectTypes.COP) {
@@ -31,21 +14,19 @@ public class Player {
         } else {
             this.type = Constants.ObjectTypes.THIEF;
         }
-        this.timeLimit = 500;
         this.moves = new LinkedList<Constants.Direction>();
     }
 
     public Player() {
         this.type = Constants.ObjectTypes.THIEF;
-        this.timeLimit = 500;
         this.moves = new LinkedList<Constants.Direction>();
     }
 
     public Player(Player toCopy) {
         this.type = toCopy.type;
-        this.timeLimit = toCopy.timeLimit;
         this.moves = new LinkedList<Constants.Direction>();
     }
+
     public Constants.Direction getMove() {
         if(this.moves.size() > 0) {
             return this.moves.remove();

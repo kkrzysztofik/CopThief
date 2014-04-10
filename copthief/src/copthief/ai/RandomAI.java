@@ -15,13 +15,11 @@ public class RandomAI extends Player {
         } else {
             this.type = Constants.ObjectTypes.THIEF;
         }
-        this.timeLimit = ttimeLimit;
         this.moves = new LinkedList<Constants.Direction>();
     }
 
     public RandomAI(int ttimelimit) {
         this.type = Constants.ObjectTypes.THIEF;
-        this.timeLimit = ttimelimit;
         this.moves = new LinkedList<Constants.Direction>();
     }
 
@@ -31,19 +29,16 @@ public class RandomAI extends Player {
         } else {
             this.type = Constants.ObjectTypes.THIEF;
         }
-        this.timeLimit = 500;
         this.moves = new LinkedList<Constants.Direction>();
     }
 
     public RandomAI() {
         this.type = Constants.ObjectTypes.THIEF;
-        this.timeLimit = 500;
         this.moves = new LinkedList<Constants.Direction>();
     }
 
     public RandomAI(Player toCopy) {
         this.type = toCopy.getType();
-        this.timeLimit = toCopy.getTimeLimit();
         this.moves = new LinkedList<Constants.Direction>();
     }
 
