@@ -202,12 +202,25 @@ public class MainLoop {
             lastList = this.visitedStates;
         }
 
+
         for(BoardObject obj : gameBoard.objects){
-            obj.prepareMove(lastList, k);
+            List<Board> copyList = new LinkedList<Board>();
+
+            for(Board b : lastList) {
+                copyList.add(new Board(b));
+            }
+
+            obj.prepareMove(copyList, k);
         }
 
         for(Player plr : gameBoard.players){
-            plr.prepareMove(lastList, k);
+            List<Board> copyList = new LinkedList<Board>();
+
+            for(Board b : lastList) {
+                copyList.add(new Board(b));
+            }
+
+            plr.prepareMove(copyList, k);
         }
     }
 
@@ -320,6 +333,7 @@ public class MainLoop {
             }
         }
         //check if thief in range of cop or in gateway
+        gameBoard.refreshBoard();
     }
 
     public String print() {

@@ -99,8 +99,4 @@ public class Player {
         //1 - up, 2 - down, 3 - right, 4 - left, 0 - stay
         //must fill moves list
     }
-
-    public int getTimeLimit() {
-        return this.timeLimit;
-    }
 }
