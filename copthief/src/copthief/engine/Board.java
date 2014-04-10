@@ -155,7 +155,7 @@ public class Board {
                 new_posY = startY+1;
                 break;
         }
-        if(startX >= this.size || startY >= this.size) {
+        if(new_posX >= this.size || new_posY >= this.size || new_posX <= 1 || new_posY <= 1) {
             return true; //Cannot exceed board
         }
 

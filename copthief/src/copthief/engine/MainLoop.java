@@ -299,7 +299,7 @@ public class MainLoop {
                             } else if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY+1, Constants.ObjectTypes.THIEF)) {
                                 plr.setPos(posX, posY+1);
                             } else if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY-1, Constants.ObjectTypes.THIEF)) {
-                                plr.setPos(posX, posY+1);
+                                plr.setPos(posX, posY-1);
                             } else {
                                 plr.moveRandom(posX, posY, gameBoard.getSize());
                             }
