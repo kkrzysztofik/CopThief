@@ -62,6 +62,8 @@ public class BoardObject {
     public BoardObject(BoardObject toCopy) {
         this.type = toCopy.type;
         this.sizeX = toCopy.sizeX;
+        this.posX = toCopy.posX;
+        this.posY = toCopy.posY;
         this.sizeY = toCopy.sizeY;
         this.movementChance = toCopy.movementChance;
         this.movementDirectionChange = toCopy.movementDirectionChange;

@@ -24,6 +24,8 @@ public class Player {
 
     public Player(Player toCopy) {
         this.type = toCopy.type;
+        this.posY = toCopy.posY;
+        this.posX = toCopy.posX;
         this.moves = new LinkedList<Constants.Direction>();
     }
 
@@ -40,47 +42,21 @@ public class Player {
         this.posY = posY;
     }
 
-    public void moveRandom(int posX, int posY, int boardSize) {
-        RandomSingleton rnd = RandomSingleton.getInstance();
-        Constants.Direction movementDirection = Constants.Direction.fromInteger(rnd.nextInt(4)+1);
-        switch(movementDirection) {
+    public void move(Constants.Direction dir) {
+        switch (dir) {
             case UP:
-                if(posY + 1 >= boardSize) {
-                    posY -= 1;
-                    break;
-                }
-
-                posY += 1;
+                this.setPos(posX, posY+1);
                 break;
-
             case DOWN:
-                if(posY - 1 <= 2) {
-                    posY += 1;
-                    break;
-                }
-
-                posY -= 1;
+                this.setPos(posX, posY-1);
                 break;
-
             case LEFT:
-                if(posX <= 2) {
-                    posX += 1;
-                    break;
-                }
-
-                posX -= 1;
+                this.setPos(posX-1, posY);
                 break;
-
             case RIGHT:
-                if(posX + 1 >= boardSize) {
-                    posX -= 1;
-                    break;
-                }
-
-                posX += 1;
+                this.setPos(posX+1, posY);
                 break;
         }
-        this.setPos(posX, posY);
     }
 
     public int getPosX(){

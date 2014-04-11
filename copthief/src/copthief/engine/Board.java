@@ -78,14 +78,14 @@ public class Board {
     public void moveFromCollision(Player plr, int posX, int posY) throws GameEndException {
         Constants.ObjectTypes plrType = plr.getType();
 
-        if (!this.checkIfCollide(Constants.Direction.STAY, posX + 1, posY, plrType)){
-            plr.setPos(posX+1, posY);
-        } else if (!this.checkIfCollide(Constants.Direction.STAY, posX - 1, posY, plrType)) {
-            plr.setPos(posX-1, posY);
-        } else if (!this.checkIfCollide(Constants.Direction.STAY, posX, posY + 1, plrType)) {
-            plr.setPos(posX, posY+1);
-        } else if (!this.checkIfCollide(Constants.Direction.STAY, posX, posY - 1, plrType)) {
-            plr.setPos(posX, posY-1);
+        if (!this.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType)){
+            plr.move(Constants.Direction.RIGHT);
+        } else if (!this.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType)) {
+            plr.move(Constants.Direction.LEFT);
+        } else if (!this.checkIfCollide(Constants.Direction.UP, posX, posY, plrType)) {
+            plr.move(Constants.Direction.UP);
+        } else if (!this.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType)) {
+            plr.move(Constants.Direction.DOWN);
         } else {
             throw new GameEndException("Cannot move anywhere and still in collision!");
 //                                plr.moveRandom(posX, posY, gameBoard.getSize());
@@ -116,21 +116,21 @@ public class Board {
 
             for(int i = 0; i < sizeX; i++) {
                 for(int j = 0; j < sizeY; j++) {
-                    if(objType == Constants.ObjectTypes.GATEWAY) { //gateway
-                        board[posX+i][posY+j] = Constants.ObjectTypes.GATEWAY;
-                    } else { //wall
-                        board[posX+i][posY+j] = Constants.ObjectTypes.WALL;
-                    }
+                    board[posX+i][posY+j] = objType;
                 }
             }
         }
 
         for(Player plr : players) {
             Constants.ObjectTypes type = plr.getType();
-            if(type == Constants.ObjectTypes.COP) { //cop
-                board[plr.getPosX()][plr.getPosY()] = Constants.ObjectTypes.COP;
-            } else { //thief
-                board[plr.getPosX()][plr.getPosY()] = Constants.ObjectTypes.THIEF;
+            int posX = plr.getPosX(),
+                posY = plr.getPosY();
+            board[posX][posY] = type;
+            if(posX == 0 || posX == size-1) {
+                System.out.println("PosX WTF?");
+            }
+            if(posY == 0 || posY == size-1) {
+                System.out.println("PosY WTF?");
             }
         }
     }
@@ -174,7 +174,7 @@ public class Board {
                 new_posY = startY+1;
                 break;
         }
-        if(new_posX >= this.size || new_posY >= this.size || new_posX <= 1 || new_posY <= 1) {
+        if(new_posX >= this.size -1 || new_posY >= this.size -1 || new_posX < 1 || new_posY < 1) {
             return true; //Cannot exceed board
         }
 

@@ -282,44 +282,37 @@ public class MainLoop {
                     break;
                 case UP:
                     if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, plrType)) {
-                        plr.setPos(posX, posY+1);
-                    } else {
-                        if(stay_collide){
-                            gameBoard.moveFromCollision(plr, posX, posY);
-                        }
+                        plr.move(Constants.Direction.UP);
+                    } else if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case DOWN:
                     if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType)) {
-                        plr.setPos(posX, posY-1);
-                    } else {
-                        if(stay_collide){
-                            gameBoard.moveFromCollision(plr, posX, posY);
-                        }
+                        plr.move(Constants.Direction.DOWN);
+                    } else if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case RIGHT:
                     if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType)) {
-                        plr.setPos(posX, posY+1);
-                    } else {
-                        if(stay_collide){
-                            gameBoard.moveFromCollision(plr, posX, posY);
-                        }
+                        plr.move(Constants.Direction.RIGHT);
+                    } else if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case LEFT:
                     if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType)) {
-                        plr.setPos(posX-1, posY);
-                    } else {
-                        if(stay_collide){
-                            gameBoard.moveFromCollision(plr, posX, posY);
-                        }
+                        plr.move(Constants.Direction.LEFT);
+                    } else if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
             }
         }
         //check if thief in range of cop or in gateway
         gameBoard.refreshBoard();
+        visitedStates.add(new Board(gameBoard));
     }
 
     public String print() {
