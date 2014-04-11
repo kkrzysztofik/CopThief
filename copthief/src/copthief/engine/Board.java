@@ -1,5 +1,6 @@
 package copthief.engine;
 
+import java.io.Console;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -74,6 +75,23 @@ public class Board {
         }
     }
 
+    public void moveFromCollision(Player plr, int posX, int posY) throws GameEndException {
+        Constants.ObjectTypes plrType = plr.getType();
+
+        if (!this.checkIfCollide(Constants.Direction.STAY, posX + 1, posY, plrType)){
+            plr.setPos(posX+1, posY);
+        } else if (!this.checkIfCollide(Constants.Direction.STAY, posX - 1, posY, plrType)) {
+            plr.setPos(posX-1, posY);
+        } else if (!this.checkIfCollide(Constants.Direction.STAY, posX, posY + 1, plrType)) {
+            plr.setPos(posX, posY+1);
+        } else if (!this.checkIfCollide(Constants.Direction.STAY, posX, posY - 1, plrType)) {
+            plr.setPos(posX, posY-1);
+        } else {
+            throw new GameEndException("Cannot move anywhere and still in collision!");
+//                                plr.moveRandom(posX, posY, gameBoard.getSize());
+        }
+    }
+
     public void refreshBoard() {
         for(int i = 0; i < this.size; i++) {
             for(int j = 0; j < this.size; j++) {
@@ -130,6 +148,7 @@ public class Board {
         this.players = players;
         refreshBoard();
     }
+
     public boolean checkIfCollide(Constants.Direction direction, int startX, int startY, Constants.ObjectTypes type) {
         int new_posX = 0, new_posY = 0;
 
@@ -164,7 +183,13 @@ public class Board {
         }
 
         //check if in new field is wall, thief, cop
-        return !(board[new_posX][new_posY] == Constants.ObjectTypes.EMPTY || board[new_posX][new_posY] == Constants.ObjectTypes.GATEWAY);
+//        return ;
+        if(board[new_posX][new_posY] == Constants.ObjectTypes.EMPTY || board[new_posX][new_posY] == Constants.ObjectTypes.GATEWAY) {
+            return false;
+        } else {
+            System.out.println("Collision");
+            return true;
+        }
     }
 
     @Override

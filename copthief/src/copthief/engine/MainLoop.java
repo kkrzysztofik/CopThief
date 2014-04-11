@@ -27,6 +27,7 @@ public class MainLoop {
 
     private int boardWidth;
     private int outerWidth;
+    private RandomSingleton rnd;
 
 //    private LinkedList<BoardObject> objectsList;
 //    private LinkedList<Player> playerList;
@@ -70,7 +71,9 @@ public class MainLoop {
 //        this.playerList = new LinkedList<Player>();
         this.visitedStates = new LinkedList<Board>();
 
-        RandomSingleton.setRandomSeed();
+//        RandomSingleton.setRandomSeed();
+        RandomSingleton.setSeed(-3037105727631816012L);
+        this.rnd = RandomSingleton.getInstance();
         this.gameBoard = new Board(this.boardWidth);
         this.message = "";
 
@@ -266,94 +269,53 @@ public class MainLoop {
 
         for(Player plr: gameBoard.players){
             Constants.Direction movement = plr.getMove();
+            Constants.ObjectTypes plrType = plr.getType();
             int posX = plr.getPosX(),
                 posY = plr.getPosY();
+            boolean stay_collide = gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, plrType);
 
-            if(plr.getType() == Constants.ObjectTypes.COP) { //cop
-                switch (movement) {
-                    case STAY:
-                        //do nothing
-                        boolean collide = gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.COP);
-                        while(collide){
-                              if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX+1, posY, Constants.ObjectTypes.COP)){
-                                  plr.setPos(posX+1, posY);
-                              } else if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX-1, posY, Constants.ObjectTypes.COP)) {
-                                  plr.setPos(posX-1, posY);
-                              } else if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY+1, Constants.ObjectTypes.COP)) {
-                                  plr.setPos(posX, posY+1);
-                              } else if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY-1, Constants.ObjectTypes.COP)) {
-                                  plr.setPos(posX, posY-1);
-                              } else {
-                                  plr.moveRandom(posX, posY, gameBoard.getSize());
-                              }
-                              posX = plr.getPosX();
-                              posY = plr.getPosY();
-                              collide = gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.COP);
+            switch (movement) {
+                case STAY:
+                    if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
+                    }
+                    break;
+                case UP:
+                    if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, plrType)) {
+                        plr.setPos(posX, posY+1);
+                    } else {
+                        if(stay_collide){
+                            gameBoard.moveFromCollision(plr, posX, posY);
                         }
-                        break;
-                    case UP:
-                        if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, Constants.ObjectTypes.COP)) {
-                            plr.setPos(posX, posY+1);
+                    }
+                    break;
+                case DOWN:
+                    if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType)) {
+                        plr.setPos(posX, posY-1);
+                    } else {
+                        if(stay_collide){
+                            gameBoard.moveFromCollision(plr, posX, posY);
                         }
-                        break;
-                    case DOWN:
-                        if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, Constants.ObjectTypes.COP)) {
-                            plr.setPos(posX, posY-1);
+                    }
+                    break;
+                case RIGHT:
+                    if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType)) {
+                        plr.setPos(posX, posY+1);
+                    } else {
+                        if(stay_collide){
+                            gameBoard.moveFromCollision(plr, posX, posY);
                         }
-                        break;
-                    case RIGHT:
-                        if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, Constants.ObjectTypes.COP)) {
-                            plr.setPos(posX, posY+1);
+                    }
+                    break;
+                case LEFT:
+                    if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType)) {
+                        plr.setPos(posX-1, posY);
+                    } else {
+                        if(stay_collide){
+                            gameBoard.moveFromCollision(plr, posX, posY);
                         }
-                        break;
-                    case LEFT:
-                        if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, Constants.ObjectTypes.COP)) {
-                            plr.setPos(posX-1, posY);
-                        }
-                        break;
-                }
-            } else { //thief
-                switch (movement) {
-                    case STAY:
-                        boolean collide = gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.THIEF);
-                        while(collide){
-                            if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX+1, posY, Constants.ObjectTypes.THIEF)){
-                                plr.setPos(posX+1, posY);
-                            } else if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX-1, posY, Constants.ObjectTypes.THIEF)) {
-                                plr.setPos(posX-1, posY);
-                            } else if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY+1, Constants.ObjectTypes.THIEF)) {
-                                plr.setPos(posX, posY+1);
-                            } else if (!gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY-1, Constants.ObjectTypes.THIEF)) {
-                                plr.setPos(posX, posY-1);
-                            } else {
-                                plr.moveRandom(posX, posY, gameBoard.getSize());
-                            }
-                            posX = plr.getPosX();
-                            posY = plr.getPosY();
-                            collide = gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.THIEF);
-                        }
-                        break;
-                    case UP:
-                        if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, Constants.ObjectTypes.THIEF)) {
-                            plr.setPos(posX, posY+1);
-                        }
-                        break;
-                    case DOWN:
-                        if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, Constants.ObjectTypes.THIEF)) {
-                            plr.setPos(posX, posY-1);
-                        }
-                        break;
-                    case RIGHT:
-                        if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, Constants.ObjectTypes.THIEF)) {
-                            plr.setPos(posX, posY+1);
-                        }
-                        break;
-                    case LEFT:
-                        if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, Constants.ObjectTypes.THIEF)) {
-                            plr.setPos(posX-1, posY);
-                        }
-                        break;
-                }
+                    }
+                    break;
             }
         }
         //check if thief in range of cop or in gateway
@@ -364,7 +326,7 @@ public class MainLoop {
         String ret = "";
 
         if(this.message.length() > 0) {
-            ret += "Message: " + this.message + " at step " + this.currentT;
+            ret += "Message: " + this.message + " at step " + this.currentT + "\n";
         }
         ret += gameBoard.toString();
 
@@ -380,9 +342,9 @@ public class MainLoop {
         this.visitedStates.add(new Board(this.gameBoard));
 
         for(currentT = 0; currentT <= T; currentT++){
-            boolean movesLeft = (currentT%k <= 0);
+            int movesLeft = currentT%k;
 
-            if (!movesLeft) {
+            if (movesLeft <= 0) {
                 prepareMove();
             }
 
@@ -395,6 +357,8 @@ public class MainLoop {
             System.out.println("Step #" + currentT);
             System.out.println(this.print());
         }
-
+        Board last_board = gameBoard;
+        System.out.println(this.print());
+        System.out.println("Seed: " + RandomSingleton.getSeed());
     }
 }
