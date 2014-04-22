@@ -172,7 +172,7 @@ public class BoardObject {
 
                 } else {
                     if (d <= this.movementDirectionChange) {
-                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(2) + 1); //(0-1) + 1 = 1-2
+                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(2)); //(0-1) + 1 = 1-2
                     }
 
                     switch (movementDirection) {
@@ -182,7 +182,8 @@ public class BoardObject {
                         case LEFT:
                             break;
                     }
-                    this.moves.push(this.movementDirection);
+//                    this.moves.push(this.movementDirection);
+                    this.moves.push(Constants.Direction.STAY);
                 }
             } else {
                 this.moves.push(Constants.Direction.STAY);

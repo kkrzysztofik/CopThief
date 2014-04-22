@@ -11,6 +11,7 @@ public class MainLoop {
     private int timeLimit; //in ms
     private int currentT;
     private int cops;
+    private int copRange;
     private int thieves;
 
     private int walls;
@@ -38,6 +39,7 @@ public class MainLoop {
 
     private Board gameBoard;
     private String message;
+    private Display gameDisp;
 
     public MainLoop(String thievesEngine, String copEngine){
         this.T = 250;
@@ -67,16 +69,18 @@ public class MainLoop {
         this.thievesEngine = thievesEngine;
         this.copEngine = copEngine;
 
+        this.copRange = 1;
 //        this.objectsList = new LinkedList<BoardObject>();
 //        this.playerList = new LinkedList<Player>();
         this.visitedStates = new LinkedList<Board>();
 
 //        RandomSingleton.setRandomSeed();
-        RandomSingleton.setSeed(-3037105727631816012L);
+        RandomSingleton.setSeed(-3037105205831816012L);
         this.rnd = RandomSingleton.getInstance();
         this.gameBoard = new Board(this.boardWidth);
         this.message = "";
-
+        this.gameDisp = new Display("CopThief");
+        gameDisp.configureForSize(gameBoard.getSize(), gameBoard.getSize());
     }
 
     private void initBoard() {
@@ -175,6 +179,7 @@ public class MainLoop {
 
             cop.setPos(posX, posY);
             gameBoard.players.add(cop);
+            gameBoard.cops.add(cop);
             gameBoard.refreshBoard();
 
         }
@@ -191,6 +196,7 @@ public class MainLoop {
 
             thief.setPos(posX, posY);
             gameBoard.players.add(thief);
+            gameBoard.thieves.add(thief);
             gameBoard.refreshBoard();
         }
     }
@@ -228,10 +234,14 @@ public class MainLoop {
     }
 
     private void makeMove() throws GameEndException {
+        int boardSize = gameBoard.getSize();
+
         for(BoardObject obj : gameBoard.objects){
             Constants.Direction movement = obj.getMove();
             int posX = obj.getPosX(),
-                posY = obj.getPosY();
+                posY = obj.getPosY(),
+                sizeX = obj.getSizeX(),
+                sizeY = obj.getSizeY();
 
             if(obj.getType() == Constants.ObjectTypes.WALL) { //wall
                 switch (movement) {
@@ -258,8 +268,30 @@ public class MainLoop {
                         //do nothing
                         break;
                     case LEFT:
+                        if(posX > 0 || posX < boardSize - sizeX) {
+                            if(posY <= 0) {
+                                obj.setPos(posX-1, posY);
+                            } else {
+                                obj.setPos(posX+1, posY);
+                            }
+                        } else if (posX <= 0 && posY < boardSize - sizeY ) {
+                            obj.setPos(posX, posY+1);
+                        } else if (posX >= boardSize - sizeX && posY > 1) {
+                            obj.setPos(posX, posY-1);
+                        }
                         break;
                     case RIGHT:
+//                        if(posX >= 0 || posX < boardSize - sizeX) {
+//                            if(posY <= 0) {
+//                                obj.setPos(posX-1, posY);
+//                            } else {
+//                                obj.setPos(posX+1, posY);
+//                            }
+//                        } else if (posX <= 0 && posY < boardSize - sizeY ) {
+//                            obj.setPos(posX, posY+1);
+//                        } else if (posX >= boardSize - sizeX && posY > 1) {
+//                            obj.setPos(posX, posY-1);
+//                        }
                         break;
                 }
             }
@@ -310,9 +342,54 @@ public class MainLoop {
                     break;
             }
         }
-        //check if thief in range of cop or in gateway
         gameBoard.refreshBoard();
         visitedStates.add(new Board(gameBoard));
+        //check if thief in range of cop or in gateway
+        for(Player thf : gameBoard.thieves) {
+            int thfX = thf.getPosX(),
+                thfY = thf.getPosY();
+
+            for(Player cop : gameBoard.cops) {
+                int copX = cop.getPosX(),
+                    copY = cop.getPosY();
+
+                double dist = Math.sqrt(Math.pow(thfX-copX, 2) + Math.pow(thfY-copY, 2));
+
+                if(dist <= copRange) {
+                    throw new GameEndException("Thief busted!");
+                }
+            }
+
+            if (thfX <= 0 || thfX >= boardSize - 1 || thfY <= 0 || thfY >= boardSize-1){
+                throw new GameEndException("Thief run!");
+            }
+        }
+    }
+
+    private void redrawDisplay() {
+        for(int i = 0; i < gameBoard.getSize(); i++) {
+            for(int j=0; j < gameBoard.getSize(); j++) {
+                switch(gameBoard.board[i][j]) {
+                    case WALL:
+                        gameDisp.drawAtLocation("Wall", i, j);
+                        break;
+                    case GATEWAY:
+                        gameDisp.drawAtLocation("Goal", i, j);
+                        break;
+                    case THIEF:
+                        gameDisp.drawAtLocation("Man", i, j);
+                        break;
+                    case COP:
+                        gameDisp.drawAtLocation("Treasure", i, j);
+                        break;
+                    case EMPTY:
+                        gameDisp.drawAtLocation("Empty", i, j);
+                        break;
+                }
+            }
+            gameDisp.setVisible(true);
+            gameDisp.grabFocus();
+        }
     }
 
     public String print() {
@@ -350,8 +427,9 @@ public class MainLoop {
             System.out.println("Step #" + currentT);
             System.out.println(this.print());
         }
-        Board last_board = gameBoard;
+        redrawDisplay();
         System.out.println(this.print());
         System.out.println("Seed: " + RandomSingleton.getSeed());
+
     }
 }
