@@ -4,6 +4,7 @@ import copthief.ai.RandomAI;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 public class MainLoop {
     private int T;
@@ -40,6 +41,7 @@ public class MainLoop {
     private Board gameBoard;
     private String message;
     private Display gameDisp;
+    private int drawID = 0;
 
     public MainLoop(String thievesEngine, String copEngine){
         this.T = 250;
@@ -366,10 +368,12 @@ public class MainLoop {
         }
     }
 
-    private void redrawDisplay() {
-        for(int i = 0; i < gameBoard.getSize(); i++) {
-            for(int j=0; j < gameBoard.getSize(); j++) {
-                switch(gameBoard.board[i][j]) {
+    private void redrawDisplay(int drawID) {
+        Board board = visitedStates.get(drawID);
+
+        for(int i = 0; i < board.getSize(); i++) {
+            for(int j=0; j < board.getSize(); j++) {
+                switch(board.board[i][j]) {
                     case WALL:
                         gameDisp.drawAtLocation("Wall", i, j);
                         break;
@@ -403,6 +407,33 @@ public class MainLoop {
         return ret;
     }
 
+    public void quit()
+    {
+        System.exit(1);
+    }
+
+    private void processSingleCommand(Constants.Commands cmd)
+    {
+        switch (cmd)
+        {
+            case QUIT:
+                quit();
+                return;
+            case NEXT:
+                if(drawID < visitedStates.size() - 1) {
+                    drawID++;
+                }
+                break;
+            case PREVIOUS:
+                if(drawID > 0) {
+                    drawID--;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     public void run() {
         this.initBoard();
 
@@ -427,9 +458,15 @@ public class MainLoop {
             System.out.println("Step #" + currentT);
             System.out.println(this.print());
         }
-        redrawDisplay();
+
         System.out.println(this.print());
         System.out.println("Seed: " + RandomSingleton.getSeed());
 
+        while(true) {
+            redrawDisplay(this.drawID);
+            processSingleCommand(gameDisp.getCommandFromUser());
+        }
+
     }
 }
+

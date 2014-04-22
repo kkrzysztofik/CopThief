@@ -232,6 +232,7 @@ public class Display extends Frame
     private static final String FontName = "Helvetica";
     private static final int BlockSize = 30;
     private GridCanvas gridCanvas;
+    private Vector<Constants.Commands> cmds = new Vector<Constants.Commands>();
 
     private Label msgField;
 
@@ -288,8 +289,29 @@ public class Display extends Frame
                             }
                         }
                 );
+        gridCanvas.addKeyListener
+                (
+                        new KeyAdapter()
+                        {
+                            @Override
+                            public void keyPressed(KeyEvent ke)
+                            {
+                                Display.this.addCommand(ke);
+                            }
+                        }
+                );
 
     }
+
+    public synchronized void addCommand(KeyEvent ke)
+    {
+        Constants.Commands cmd = Constants.Commands.fromKeyCode(ke.getKeyCode());
+        cmds.addElement(cmd);
+
+        // Rendezvous with anyone waiting
+        notify();
+    }
+
 
     public void doDrawStatusMessage(String msg)
     {
@@ -315,5 +337,28 @@ public class Display extends Frame
     {
         gridCanvas.requestFocus();
         return gridCanvas.hasFocus();
+    }
+
+    public synchronized Constants.Commands getCommandFromUser()
+    {
+        while (cmds.size() == 0)
+        {
+            // while vector of commands is empty
+            try
+            {
+                wait();
+            }
+            catch (InterruptedException e)
+            {
+            }
+            // wait for notify
+        }
+
+        Constants.Commands cmd = cmds.elementAt(0);
+
+        // Pull first command out of queue
+        cmds.removeElementAt(0);
+
+        return cmd;
     }
 }
