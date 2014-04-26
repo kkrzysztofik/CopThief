@@ -316,17 +316,17 @@ public class MainLoop {
                             } else {
                                 obj.setPos(posX-1, posY);
                             }
-                        } else if (posX <= 0 && posY > 0) {
+                        } else if (posX <= 0 && posY >= sizeY) {
                             obj.setPos(posX, posY-1);
                         } else if (posX >= boardSize - sizeX - 1 && posY < boardSize - 1) {
                             obj.setPos(posX, posY+1);
                         } else {
-                            if (posX == 0 && posY <= sizeY) {
+                            if (posX <= 0 && posY <= sizeY) {
                                 int tmp = sizeX;
                                 sizeX = sizeY;
                                 sizeY = tmp;
                                 obj.setSize(sizeX, sizeY);
-                            } else if (posX >= boardSize - sizeX - 1 && posY == 0) {
+                            } else if (posX >= boardSize - sizeX - 1 && posY <= 0) {
                                 int tmp = sizeX;
                                 sizeX = sizeY;
                                 sizeY = tmp;
@@ -338,7 +338,7 @@ public class MainLoop {
                                 sizeY = tmp;
                                 obj.setSize(sizeX, sizeY);
                                 obj.setPos(boardSize- sizeX - 1, boardSize - 1);
-                            } else if (posX <= 0 && posY == boardSize - 1) {
+                            } else if (posX <= 0 && posY >= boardSize - 1) {
                                 int tmp = sizeX;
                                 sizeX = sizeY;
                                 sizeY = tmp;
