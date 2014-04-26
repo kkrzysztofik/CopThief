@@ -276,12 +276,37 @@ public class MainLoop {
                             } else {
                                 obj.setPos(posX+1, posY);
                             }
-                        } else if (posX <= 0 && posY < boardSize - sizeY - 1) {
+                        } else if (posX <= 0 && posY < boardSize - 1) {
                             obj.setPos(posX, posY+1);
                         } else if (posX >= boardSize - sizeX - 1 && posY > 0) {
                             obj.setPos(posX, posY-1);
                         } else {
-                            System.out.println("DUPA");
+                            if (posX == 0 && posY == 0) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
+                                obj.setPos(posX, posY+sizeY);
+                            } else if (posX == 0 && posY == boardSize - 1) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
+                            } else if (posX == boardSize - sizeX - 1  && posY == 0) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
+                                obj.setPos(boardSize - 1, boardSize - 1);
+                            } else if (posX == boardSize - 1 && posY == boardSize - sizeY - 1) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
+                                obj.setPos(boardSize - sizeX - 1, boardSize - 1);
+                            } else {
+                                System.out.println("DUPA1");
+                            }
                         }
                         break;
                     case RIGHT:
@@ -293,10 +318,34 @@ public class MainLoop {
                             }
                         } else if (posX <= 0 && posY > 0) {
                             obj.setPos(posX, posY-1);
-                        } else if (posX >= boardSize - sizeX - 1 && posY < boardSize - sizeY - 1) {
+                        } else if (posX >= boardSize - sizeX - 1 && posY < boardSize - 1) {
                             obj.setPos(posX, posY+1);
                         } else {
-                            System.out.println("DUPA");
+                            if (posX == 0 && posY <= sizeY) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
+                            } else if (posX >= boardSize - sizeX - 1 && posY == 0) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
+                                obj.setPos(boardSize - 1, sizeY);
+                            } else if (posX >= boardSize - 1  && posY >= boardSize - 1) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
+                                obj.setPos(boardSize- sizeX - 1, boardSize - 1);
+                            } else if (posX <= 0 && posY == boardSize - 1) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
+                            } else {
+                                System.out.println("DUPA2");
+                            }
                         }
                         break;
                     default:
@@ -418,10 +467,8 @@ public class MainLoop {
         System.exit(1);
     }
 
-    private void processSingleCommand(Constants.Commands cmd)
-    {
-        switch (cmd)
-        {
+    private void processSingleCommand(Constants.Commands cmd) {
+        switch (cmd) {
             case QUIT:
                 quit();
                 return;
