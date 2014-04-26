@@ -157,7 +157,7 @@ public class Display extends Frame
     {
         private static Vector<NamedImage> allImages = new Vector<NamedImage>();
         private static MediaTracker mt;
-        private static String things[] = { "Man", "Treasure" };
+        private static String things[] = { "Thief", "Cop" };
         private static String squares[] = { "Empty", "Wall", "Goal" };
         static public NamedImage findImageNamed(String name)
         {
@@ -325,6 +325,9 @@ public class Display extends Frame
 
     public void drawAtLocation(String name, int x, int y)
     {
+        if(name.equals("Cop") || name.equals("Thief")) {
+            drawAtLocation("Empty", '\0', x, y);
+        }
         drawAtLocation(name, '\0', x, y);
     }
 
