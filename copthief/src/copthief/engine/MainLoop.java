@@ -270,31 +270,37 @@ public class MainLoop {
                         //do nothing
                         break;
                     case LEFT:
-                        if(posX > 0 || posX < boardSize - sizeX) {
+                        if(posX > 0 && posX < boardSize - sizeX - 1) {
                             if(posY <= 0) {
                                 obj.setPos(posX-1, posY);
                             } else {
                                 obj.setPos(posX+1, posY);
                             }
-                        } else if (posX <= 0 && posY < boardSize - sizeY ) {
+                        } else if (posX <= 0 && posY < boardSize - sizeY - 1) {
                             obj.setPos(posX, posY+1);
-                        } else if (posX >= boardSize - sizeX && posY > 1) {
+                        } else if (posX >= boardSize - sizeX - 1 && posY > 0) {
                             obj.setPos(posX, posY-1);
+                        } else {
+                            System.out.println("DUPA");
                         }
                         break;
                     case RIGHT:
-//                        if(posX >= 0 || posX < boardSize - sizeX) {
-//                            if(posY <= 0) {
-//                                obj.setPos(posX-1, posY);
-//                            } else {
-//                                obj.setPos(posX+1, posY);
-//                            }
-//                        } else if (posX <= 0 && posY < boardSize - sizeY ) {
-//                            obj.setPos(posX, posY+1);
-//                        } else if (posX >= boardSize - sizeX && posY > 1) {
-//                            obj.setPos(posX, posY-1);
-//                        }
+                        if(posX >= 0 && posX < boardSize - sizeX - 1) {
+                            if(posY <= 0) {
+                                obj.setPos(posX+1, posY);
+                            } else {
+                                obj.setPos(posX-1, posY);
+                            }
+                        } else if (posX <= 0 && posY > 0) {
+                            obj.setPos(posX, posY-1);
+                        } else if (posX >= boardSize - sizeX - 1 && posY < boardSize - sizeY - 1) {
+                            obj.setPos(posX, posY+1);
+                        } else {
+                            System.out.println("DUPA");
+                        }
                         break;
+                    default:
+                        System.out.println("JAKI KIERUNEK?!?!?!?");
                 }
             }
         }
@@ -381,10 +387,10 @@ public class MainLoop {
                         gameDisp.drawAtLocation("Goal", i, j);
                         break;
                     case THIEF:
-                        gameDisp.drawAtLocation("Man", i, j);
+                        gameDisp.drawAtLocation("Thief", i, j);
                         break;
                     case COP:
-                        gameDisp.drawAtLocation("Treasure", i, j);
+                        gameDisp.drawAtLocation("Cop", i, j);
                         break;
                     case EMPTY:
                         gameDisp.drawAtLocation("Empty", i, j);

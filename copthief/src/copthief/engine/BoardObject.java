@@ -172,18 +172,18 @@ public class BoardObject {
 
                 } else {
                     if (d <= this.movementDirectionChange) {
-                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(2)); //(0-1) + 1 = 1-2
+                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(2)); //(0-1)
                     }
 
-                    switch (movementDirection) {
-                        case RIGHT:
-                            //todo: gate movement
-                            break;
-                        case LEFT:
-                            break;
-                    }
-//                    this.moves.push(this.movementDirection);
-                    this.moves.push(Constants.Direction.STAY);
+//                    switch (movementDirection) {
+//                        case RIGHT:
+//                            //todo: gate movement
+//                            break;
+//                        case LEFT:
+//                            break;
+//                    }
+                    this.moves.push(this.movementDirection);
+//                    this.moves.push(Constants.Direction.STAY);
                 }
             } else {
                 this.moves.push(Constants.Direction.STAY);
