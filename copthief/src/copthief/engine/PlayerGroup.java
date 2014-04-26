@@ -1,4 +1,8 @@
 package copthief.engine;
 
-public class PlayerGroup {
+import java.util.LinkedList;
+
+public abstract class PlayerGroup implements Runnable {
+    public LinkedList<Player> players;
+    public abstract void run();
 }
