@@ -112,45 +112,50 @@ public class Board {
     }
 
     public void refreshBoard() {
-        for(int i = 0; i < this.size; i++) {
-            for(int j = 0; j < this.size; j++) {
-                board[i][j] = Constants.ObjectTypes.EMPTY;
-            }
-        }
-
-        //outer walls
-        for(int i = 0; i < this.size; i++) {
-            board[i][0] = Constants.ObjectTypes.WALL;
-            board[i][size-1] = Constants.ObjectTypes.WALL;
-            board[0][i] = Constants.ObjectTypes.WALL;
-            board[size-1][i] = Constants.ObjectTypes.WALL;
-        }
-
-        for(BoardObject obj : objects) {
-            Constants.ObjectTypes objType = obj.getType();
-            int sizeX = obj.getSizeX(),
-                sizeY = obj.getSizeY(),
-                posX = obj.getPosX(),
-                posY = obj.getPosY();
-
-            for(int i = 0; i < sizeX; i++) {
-                for(int j = 0; j < sizeY; j++) {
-                    board[posX+i][posY+j] = objType;
+        try {
+            for(int i = 0; i < this.size; i++) {
+                for(int j = 0; j < this.size; j++) {
+                    board[i][j] = Constants.ObjectTypes.EMPTY;
                 }
             }
-        }
 
-        for(Player plr : players) {
-            Constants.ObjectTypes type = plr.getType();
-            int posX = plr.getPosX(),
-                posY = plr.getPosY();
-            board[posX][posY] = type;
-            if(posX == 0 || posX == size-1) {
-                System.out.println("PosX WTF?");
+            //outer walls
+            for(int i = 0; i < this.size; i++) {
+                board[i][0] = Constants.ObjectTypes.WALL;
+                board[i][size-1] = Constants.ObjectTypes.WALL;
+                board[0][i] = Constants.ObjectTypes.WALL;
+                board[size-1][i] = Constants.ObjectTypes.WALL;
             }
-            if(posY == 0 || posY == size-1) {
-                System.out.println("PosY WTF?");
+
+            for(BoardObject obj : objects) {
+                Constants.ObjectTypes objType = obj.getType();
+                int sizeX = obj.getSizeX(),
+                    sizeY = obj.getSizeY(),
+                    posX = obj.getPosX(),
+                    posY = obj.getPosY();
+
+                for(int i = 0; i < sizeX; i++) {
+                    for(int j = 0; j < sizeY; j++) {
+                        board[posX+i][posY+j] = objType;
+                    }
+                }
             }
+
+            for(Player plr : players) {
+                Constants.ObjectTypes type = plr.getType();
+                int posX = plr.getPosX(),
+                    posY = plr.getPosY();
+                board[posX][posY] = type;
+                if(posX == 0 || posX == size-1) {
+                    System.out.println("PosX WTF?");
+                }
+                if(posY == 0 || posY == size-1) {
+                    System.out.println("PosY WTF?");
+                }
+            }
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            System.out.println("Out of bound");
+            System.exit(1);
         }
     }
 

@@ -110,6 +110,12 @@ public class BoardObject {
         this.posY = posY;
     }
 
+    public void swapSize() {
+        int tmp = sizeX;
+        sizeX = sizeY;
+        sizeY = tmp;
+    }
+
     public void prepareMove(List<Board> stateList, int k) {
         RandomSingleton rn = RandomSingleton.getInstance();
         Board last = stateList.get(stateList.size() - 1);
