@@ -270,7 +270,7 @@ public class MainLoop {
                         //do nothing
                         break;
                     case LEFT:
-                        if(posX > 0 && posX < boardSize - sizeX - 1) {
+                        if(posX > 0 && posX <= boardSize - sizeX - 1) {
                             if(posY <= 0) {
                                 obj.setPos(posX-1, posY);
                             } else {
@@ -292,12 +292,12 @@ public class MainLoop {
                                 sizeX = sizeY;
                                 sizeY = tmp;
                                 obj.setSize(sizeX, sizeY);
-                            } else if (posX == boardSize - sizeX - 1  && posY == 0) {
+                            } else if (posX == boardSize - 1  && posY == 0) {
                                 int tmp = sizeX;
                                 sizeX = sizeY;
                                 sizeY = tmp;
                                 obj.setSize(sizeX, sizeY);
-                                obj.setPos(boardSize - 1, boardSize - 1);
+                                obj.setPos(boardSize - sizeX - 1, boardSize - 1);
                             } else if (posX == boardSize - 1 && posY == boardSize - sizeY - 1) {
                                 int tmp = sizeX;
                                 sizeX = sizeY;
@@ -310,7 +310,7 @@ public class MainLoop {
                         }
                         break;
                     case RIGHT:
-                        if(posX >= 0 && posX < boardSize - sizeX - 1) {
+                        if(posX > 0 && posX <= boardSize - sizeX - 1) {
                             if(posY <= 0) {
                                 obj.setPos(posX+1, posY);
                             } else {
@@ -326,6 +326,11 @@ public class MainLoop {
                                 sizeX = sizeY;
                                 sizeY = tmp;
                                 obj.setSize(sizeX, sizeY);
+                            } else if (posX <= 0 && posY >= boardSize - 1) {
+                                int tmp = sizeX;
+                                sizeX = sizeY;
+                                sizeY = tmp;
+                                obj.setSize(sizeX, sizeY);
                             } else if (posX >= boardSize - sizeX - 1 && posY <= 0) {
                                 int tmp = sizeX;
                                 sizeX = sizeY;
@@ -337,12 +342,7 @@ public class MainLoop {
                                 sizeX = sizeY;
                                 sizeY = tmp;
                                 obj.setSize(sizeX, sizeY);
-                                obj.setPos(boardSize- sizeX - 1, boardSize - 1);
-                            } else if (posX <= 0 && posY >= boardSize - 1) {
-                                int tmp = sizeX;
-                                sizeX = sizeY;
-                                sizeY = tmp;
-                                obj.setSize(sizeX, sizeY);
+                                obj.setPos(boardSize - sizeX - 1, boardSize - 1);
                             } else {
                                 System.out.println("DUPA2");
                             }
@@ -425,10 +425,11 @@ public class MainLoop {
 
     private void redrawDisplay(int drawID) {
         Board board = visitedStates.get(drawID);
+        int boardSize = board.getSize();
 
-        for(int i = 0; i < board.getSize(); i++) {
-            for(int j=0; j < board.getSize(); j++) {
-                switch(board.board[i][j]) {
+        for(int i = boardSize-1; i >= 0; i--) {
+            for(int j=0; j < boardSize; j++) {
+                switch(board.board[j][i]) {
                     case WALL:
                         gameDisp.drawAtLocation("Wall", i, j);
                         break;
@@ -446,9 +447,9 @@ public class MainLoop {
                         break;
                 }
             }
-            gameDisp.setVisible(true);
-            gameDisp.grabFocus();
         }
+        gameDisp.setVisible(true);
+        gameDisp.grabFocus();
     }
 
     public String print() {
@@ -462,29 +463,32 @@ public class MainLoop {
         return ret;
     }
 
-    public void quit()
-    {
+    public void quit() {
+        System.out.println("DONE");
         System.exit(1);
     }
 
-    private void processSingleCommand(Constants.Commands cmd) {
+    private boolean processSingleCommand(Constants.Commands cmd) {
         switch (cmd) {
             case QUIT:
                 quit();
-                return;
+                break;
             case NEXT:
                 if(drawID < visitedStates.size() - 1) {
                     drawID++;
+                    return true;
                 }
                 break;
             case PREVIOUS:
                 if(drawID > 0) {
                     drawID--;
+                    return true;
                 }
                 break;
             default:
                 break;
         }
+        return false;
     }
 
     public void run() {
@@ -515,11 +519,14 @@ public class MainLoop {
         System.out.println(this.print());
         System.out.println("Seed: " + RandomSingleton.getSeed());
 
+        Boolean redraw = true;
         while(true) {
-            redrawDisplay(this.drawID);
-            processSingleCommand(gameDisp.getCommandFromUser());
-        }
+            if(redraw) {
+                redrawDisplay(this.drawID);
+            }
 
+            redraw = processSingleCommand(gameDisp.getCommandFromUser());
+        }
     }
 }
 

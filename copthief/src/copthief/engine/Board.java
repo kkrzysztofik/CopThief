@@ -215,9 +215,9 @@ public class Board {
     public String toString() {
         String ret = "  ";
 
-        for (int i = 0; i < size; i++) {
+        for (int i = size-1; i >= 0; i--) {
             for (int j = 0; j < size; j++) {
-                switch (board[i][j]) {
+                switch (board[j][i]) {
                     case EMPTY:
                         ret += " - ";
                         break;
