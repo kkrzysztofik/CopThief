@@ -55,7 +55,7 @@ public class MainLoop {
 
         this.gates = 2;
         this.gatesWidth = 2;
-        this.gateMovementChance = 0.5;
+        this.gateMovementChance = 1;
         this.gateMovementDirectionChange = 0.1;
 
         this.walls = 4;
@@ -89,56 +89,43 @@ public class MainLoop {
         RandomSingleton rnd = RandomSingleton.getInstance();
 
         for(int i = 0; i<gates; i++) { //gates
-            int whichWall = rnd.nextInt(4),
-                pos = rnd.nextInt(this.boardWidth+1),
-                sizeX = 1,
+            int sizeX = 1,
                 sizeY = 1,
                 posX = 0,
-                posY = 0;
+                posY = 0,
+                z = rnd.nextInt(4*boardWidth + 3),
+                a = (int) Math.floor(z/(boardWidth + 1));
 
-            if(whichWall < 2) {
-                sizeX = this.gatesWidth;
-            } else {
-                sizeY = this.gatesWidth;
-            }
-
-            switch(whichWall) {
+            switch (a) {
                 case 0:
-                    posX = pos;
-                    posY = this.outerWidth - 1;
+                    posX = z % (boardWidth + 1);
+                    posY = 0;
+                    sizeX = this.gatesWidth;
 
-                    if(posX+sizeX-1 > this.outerWidth) {
-                        posX = this.outerWidth - sizeX;
-                    }
                     break;
                 case 1:
-                    posX = pos;
-                    posY = 0;
+                    posX = (boardWidth + 1);
+                    posY = z % (boardWidth + 1);
+                    sizeY = this.gatesWidth;
 
-                    if(posX+sizeX-1 > this.outerWidth) {
-                        posX = this.outerWidth - sizeX;
-                    }
                     break;
                 case 2:
-                    posX = 0;
-                    posY = pos;
+                    posX = (boardWidth + 1) - z % (boardWidth + 1);
+                    posY = (boardWidth + 1);
+                    sizeX = this.gatesWidth;
 
-                    if(posY+sizeY-1 > this.outerWidth) {
-                        posY = this.outerWidth - sizeY;
-                    }
                     break;
                 case 3:
-                    posX = this.outerWidth - 1;
-                    posY = pos;
+                    posX = 0;
+                    posY = (boardWidth + 1) - z % (boardWidth + 1);
+                    sizeY = this.gatesWidth;
 
-                    if(posY+sizeY-1 > this.outerWidth) {
-                        posY = this.outerWidth - sizeY;
-                    }
                     break;
             }
 
             BoardObject obj = new BoardObject(Constants.ObjectTypes.GATEWAY, sizeX, sizeY, gateMovementChance, gateMovementDirectionChange);
             obj.setPos(posX, posY);
+            obj.setZ(z);
             gameBoard.objects.add(obj);
             gameBoard.refreshBoard();
         }
@@ -265,83 +252,72 @@ public class MainLoop {
                 }
                 // check if collide with players
             } else { //gateway
+                int z = obj.getZ();
+
                 switch (movement) {
                     case STAY:
                         //do nothing
                         break;
                     case LEFT:
-                        if(posX == boardSize - 1 && posY <= sizeY && sizeY > sizeX) {
-                            obj.swapSize();
-                            obj.setPos(boardSize - sizeX, 0);
-                        } else if(posX > 0 && posY == 0) {
-                            obj.setPos(posX-1, posY);
-                        } else if(posX == 0 && posY == 0) {
-                            obj.swapSize();
-                            obj.setPos(0, sizeY);
-                        } else if(posX == 0 && posY < boardSize - 1) {
-                            obj.setPos(posX, posY+1);
-                        } else if(posX == 0 && posY == boardSize - 1) {
-                            if(sizeX < sizeY) {
-                                obj.swapSize();
-                            } else {
-                                obj.setPos(posX+1, posY);
-                            }
-                        } else if(posX < boardSize - sizeX && posY == boardSize - 1) {
-                            obj.setPos(posX+1, posY);
-                        } else if(posX == boardSize - sizeX && posY == boardSize - 1) {
-                            if(sizeX > sizeY) {
-                                obj.swapSize();
-                            } else {
-                                obj.setPos(posX, posY-1);
-                            }
-                        } else if(posX == boardSize - 1 && posY > sizeY) {
-                            obj.setPos(posX, posY-1);
-                        } else {
-                            System.out.println("Wrong pos. You missed sthg?");
+                        obj.setZ(z-1);
+                        if((z - 1) < 0) {
+                            obj.setZ(4*boardWidth + 3);
                         }
 
                         break;
                     case RIGHT:
-//                        if(posX > 0 && posX <= boardSize - 1) {
-//                            if(posY <= 0) {
-//                                obj.setPos(posX+1, posY);
-//                            } else {
-//                                obj.setPos(posX-1, posY);
-//                            }
-//                        } else if (posX <= 0 && posY >= sizeY) {
-//                            obj.setPos(posX, posY-1);
-//                        } else if (posX >= boardSize - sizeX - 1 && posY < boardSize - 1) {
-//                            obj.setPos(posX, posY+1);
-//                        } else {
-//                            if (posX <= 0 && posY <= sizeY) {
-//                                int tmp = sizeX;
-//                                sizeX = sizeY;
-//                                sizeY = tmp;
-//                                obj.setSize(sizeX, sizeY);
-//                            } else if (posX <= 0 && posY >= boardSize - 1) {
-//                                int tmp = sizeX;
-//                                sizeX = sizeY;
-//                                sizeY = tmp;
-//                                obj.setSize(sizeX, sizeY);
-//                            } else if (posX >= boardSize - sizeX - 1 && posY <= 0) {
-//                                int tmp = sizeX;
-//                                sizeX = sizeY;
-//                                sizeY = tmp;
-//                                obj.setSize(sizeX, sizeY);
-//                                obj.setPos(boardSize - 1, sizeY);
-//                            } else if (posX >= boardSize - 1  && posY >= boardSize - 1) {
-//                                int tmp = sizeX;
-//                                sizeX = sizeY;
-//                                sizeY = tmp;
-//                                obj.setSize(sizeX, sizeY);
-//                                obj.setPos(boardSize - sizeX - 1, boardSize - 1);
-//                            } else {
-//                                System.out.println("DUPA2");
-//                            }
-//                        }
+                        obj.setZ(z+1);
+                        if((z + 1) > (4*boardWidth + 3)) {
+                            obj.setZ(0);
+                        }
+
                         break;
                     default:
                         System.out.println("JAKI KIERUNEK?!?!?!?");
+                        break;
+                }
+
+                z = obj.getZ();
+                int a = (int) Math.floor(z/(boardSize-1));
+
+                switch (a) {
+                    case 0:
+                        posX = z % (boardSize-1);
+                        posY = 0;
+
+                        obj.setPos(posX, posY);
+                        if(sizeY > sizeX) {
+                            obj.swapSize();
+                        }
+
+                        break;
+                    case 1:
+                        posX = boardSize - 1;
+                        posY = z % (boardSize-1);
+
+                        obj.setPos(posX, posY);
+                        if(sizeX > sizeY) {
+                            obj.swapSize();
+                        }
+
+                        break;
+                    case 2:
+                        posX = boardSize - 1 - z % (boardSize-1);
+                        posY = boardSize - 1;
+
+                        obj.setPos(posX, posY);
+                        if(sizeY > sizeX) {
+                            obj.swapSize();
+                        }
+                        break;
+                    case 3:
+                        posX = 0;
+                        posY = boardSize - 1 - z % (boardSize-1);
+
+                        obj.setPos(posX, posY);
+                        if(sizeY < sizeX) {
+                            obj.swapSize();
+                        }
                         break;
                 }
             }

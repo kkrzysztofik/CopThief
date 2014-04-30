@@ -7,7 +7,7 @@ import java.util.Random;
 public class BoardObject {
     private Constants.ObjectTypes type; //0 - wall, 1 - gateway
     private int sizeX, sizeY;
-    private int posX, posY;
+    private int posX, posY, posZ = 0;
     private double movementChance;
     private double movementDirectionChange;
     private Constants.Direction movementDirection; //1 - up, 2 - down, 3 - right, 4 - left, 0 - stay
@@ -116,6 +116,14 @@ public class BoardObject {
         sizeY = tmp;
     }
 
+    public void setZ(int zz){
+        this.posZ = zz;
+    }
+
+    public int getZ() {
+        return this.posZ;
+    }
+
     public void prepareMove(List<Board> stateList, int k) {
         RandomSingleton rn = RandomSingleton.getInstance();
         Board last = stateList.get(stateList.size() - 1);
@@ -130,7 +138,7 @@ public class BoardObject {
                 d = rn.nextDouble();
                 if (this.type == Constants.ObjectTypes.WALL) {
                     if (d <= this.movementDirectionChange) {
-                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(4)+1); //(0-3) + 1 = 1-4
+                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(4)); //(0-3) + 1 = 1-4
                     }
 
                     switch(movementDirection) {
@@ -181,13 +189,6 @@ public class BoardObject {
                         this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(2)); //(0-1)
                     }
 
-//                    switch (movementDirection) {
-//                        case RIGHT:
-//                            //todo: gate movement
-//                            break;
-//                        case LEFT:
-//                            break;
-//                    }
                     this.moves.push(this.movementDirection);
 //                    this.moves.push(Constants.Direction.STAY);
                 }
