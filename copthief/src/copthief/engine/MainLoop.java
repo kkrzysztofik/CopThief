@@ -110,14 +110,14 @@ public class MainLoop {
 
                     break;
                 case 2:
-                    posX = (boardWidth + 1) - z % (boardWidth + 1);
+                    posX = (boardWidth) - z % (boardWidth + 1);
                     posY = (boardWidth + 1);
                     sizeX = this.gatesWidth;
 
                     break;
                 case 3:
                     posX = 0;
-                    posY = (boardWidth + 1) - z % (boardWidth + 1);
+                    posY = (boardWidth) - z % (boardWidth + 1);
                     sizeY = this.gatesWidth;
 
                     break;
@@ -259,6 +259,7 @@ public class MainLoop {
                         //do nothing
                         break;
                     case LEFT:
+                        System.out.println("LEFT");
                         obj.setZ(z-1);
                         if((z - 1) < 0) {
                             obj.setZ(4*boardWidth + 3);
@@ -266,6 +267,7 @@ public class MainLoop {
 
                         break;
                     case RIGHT:
+                        System.out.println("RIGHT");
                         obj.setZ(z+1);
                         if((z + 1) > (4*boardWidth + 3)) {
                             obj.setZ(0);
@@ -302,7 +304,7 @@ public class MainLoop {
 
                         break;
                     case 2:
-                        posX = boardSize - 1 - z % (boardSize-1);
+                        posX = boardSize - 2 - z % (boardSize-1);
                         posY = boardSize - 1;
 
                         obj.setPos(posX, posY);
@@ -312,7 +314,7 @@ public class MainLoop {
                         break;
                     case 3:
                         posX = 0;
-                        posY = boardSize - 1 - z % (boardSize-1);
+                        posY = boardSize - 2 - z % (boardSize-1);
 
                         obj.setPos(posX, posY);
                         if(sizeY < sizeX) {

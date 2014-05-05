@@ -29,9 +29,9 @@ public class BoardObject {
 
         RandomSingleton rn = RandomSingleton.getInstance();
         if(type == Constants.ObjectTypes.GATEWAY) {
-            this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(3));
+            this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(2));
         } else {
-            this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(4)+1);
+            this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(4));
         }
 
         this.moves = new LinkedList<Constants.Direction>();
@@ -186,7 +186,8 @@ public class BoardObject {
 
                 } else {
                     if (d <= this.movementDirectionChange) {
-                        this.movementDirection = Constants.Direction.fromInteger(rn.nextInt(2)); //(0-1)
+                        int rand = rn.nextInt(2);
+                        this.movementDirection = Constants.Direction.fromInteger(rand); //(0-1)
                     }
 
                     this.moves.push(this.movementDirection);
