@@ -72,11 +72,9 @@ public class MainLoop {
         this.copEngine = copEngine;
 
         this.copRange = 1;
-//        this.objectsList = new LinkedList<BoardObject>();
-//        this.playerList = new LinkedList<Player>();
+
         this.visitedStates = new LinkedList<Board>();
 
-//        RandomSingleton.setRandomSeed();
         RandomSingleton.setSeed(-3037105205831816012L);
         this.rnd = RandomSingleton.getInstance();
         this.gameBoard = new Board(this.boardWidth);
@@ -156,8 +154,10 @@ public class MainLoop {
         }
 
         //RandomAI for now
+        PlayerGroup copGrp = new RandomAI(Constants.ObjectTypes.COP, this.cops);
+
         for(int i = 0; i<cops; i++) {
-            Player cop = new RandomAI(Constants.ObjectTypes.COP);
+            Player cop = new Player(Constants.ObjectTypes.COP);
             int posX = rnd.nextInt(this.boardWidth)+1,
                 posY = rnd.nextInt(this.boardWidth)+1;
 
@@ -167,14 +167,18 @@ public class MainLoop {
             }
 
             cop.setPos(posX, posY);
-            gameBoard.players.add(cop);
-            gameBoard.cops.add(cop);
-            gameBoard.refreshBoard();
-
+            copGrp.players.add(cop);
         }
 
+        gameBoard.cops = copGrp;
+        gameBoard.refreshBoard();
+
+        ///////////////////////////
+
+        PlayerGroup thfGrp = new RandomAI(Constants.ObjectTypes.THIEF, this.thieves);
+
         for(int i = 0; i<thieves; i++) {
-            Player thief = new RandomAI(Constants.ObjectTypes.THIEF);
+            Player thief = new Player(Constants.ObjectTypes.THIEF);
             int posX = rnd.nextInt(this.boardWidth)+1,
                 posY = rnd.nextInt(this.boardWidth)+1;
 
@@ -184,10 +188,11 @@ public class MainLoop {
             }
 
             thief.setPos(posX, posY);
-            gameBoard.players.add(thief);
-            gameBoard.thieves.add(thief);
-            gameBoard.refreshBoard();
+            thfGrp.players.add(thief);
         }
+
+        gameBoard.thieves = thfGrp;
+        gameBoard.refreshBoard();
     }
 
     private void prepareMove() {
@@ -211,15 +216,30 @@ public class MainLoop {
             obj.prepareMove(copyList, k);
         }
 
-        for(Player plr : gameBoard.players){
-            List<Board> copyList = new LinkedList<Board>();
 
-            for(Board b : lastList) {
-                copyList.add(new Board(b));
-            }
+        List<Board> copyList = new LinkedList<Board>();
 
-            plr.prepareMove(copyList, k);
+        for(Board b : lastList) {
+            copyList.add(new Board(b));
         }
+
+        gameBoard.cops.states = copyList;
+        Thread copThrd = new Thread(gameBoard.cops);
+        long t1 = System.currentTimeMillis();
+
+        copThrd.run();
+
+        List<Board> thievesList = new LinkedList<Board>();
+
+        for(Board b : lastList) {
+            thievesList.add(new Board(b));
+        }
+
+        gameBoard.thieves.states = thievesList;
+        Thread thvThrd = new Thread(gameBoard.thieves);
+
+        thvThrd.run();
+
     }
 
     private void makeMove() throws GameEndException {
@@ -327,7 +347,7 @@ public class MainLoop {
 
         gameBoard.refreshBoard();
 
-        for(Player plr: gameBoard.players){
+        for(Player plr: gameBoard.cops.players){
             Constants.Direction movement = plr.getMove();
             Constants.ObjectTypes plrType = plr.getType();
             int posX = plr.getPosX(),
@@ -370,14 +390,58 @@ public class MainLoop {
                     break;
             }
         }
+
+        for(Player plr: gameBoard.thieves.players){
+            Constants.Direction movement = plr.getMove();
+            Constants.ObjectTypes plrType = plr.getType();
+            int posX = plr.getPosX(),
+                    posY = plr.getPosY();
+            boolean stay_collide = gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, plrType);
+
+            switch (movement) {
+                case STAY:
+                    if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
+                    }
+                    break;
+                case UP:
+                    if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, plrType)) {
+                        plr.move(Constants.Direction.UP);
+                    } else if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
+                    }
+                    break;
+                case DOWN:
+                    if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType)) {
+                        plr.move(Constants.Direction.DOWN);
+                    } else if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
+                    }
+                    break;
+                case RIGHT:
+                    if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType)) {
+                        plr.move(Constants.Direction.RIGHT);
+                    } else if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
+                    }
+                    break;
+                case LEFT:
+                    if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType)) {
+                        plr.move(Constants.Direction.LEFT);
+                    } else if(stay_collide){
+                        gameBoard.moveFromCollision(plr, posX, posY);
+                    }
+                    break;
+            }
+        }
         gameBoard.refreshBoard();
         visitedStates.add(new Board(gameBoard));
         //check if thief in range of cop or in gateway
-        for(Player thf : gameBoard.thieves) {
+        for(Player thf : gameBoard.thieves.players) {
             int thfX = thf.getPosX(),
                 thfY = thf.getPosY();
 
-            for(Player cop : gameBoard.cops) {
+            for(Player cop : gameBoard.cops.players) {
                 int copX = cop.getPosX(),
                     copY = cop.getPosY();
 

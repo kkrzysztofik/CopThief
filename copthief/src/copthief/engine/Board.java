@@ -7,18 +7,14 @@ import java.util.List;
 public class Board {
     private int size;
     public List<BoardObject> objects;
-    public List<Player> players; //cops and thiefs
-    public List<Player> thieves;
-    public List<Player> cops;
+    public PlayerGroup cops; //cops and thiefs
+    public PlayerGroup thieves;
 
     public Constants.ObjectTypes[][] board; //1 - wall, 2 - gateway, 3 - thief, 4 - cop, 0 - empty
 
-    public Board(int size, List<BoardObject> objects, List<Player> players){
+    public Board(int size, List<BoardObject> objects){
         this.size = size+2;
         this.objects = objects;
-        this.players = players;
-        this.cops = new LinkedList<Player>();
-        this.thieves = new LinkedList<Player>();
         this.board = new Constants.ObjectTypes[this.size][this.size];
 
         for(int i = 0; i < this.size; i++) {
@@ -53,32 +49,21 @@ public class Board {
         }
 
         this.objects = new LinkedList<BoardObject>();
-        this.players = new LinkedList<Player>();
-        this.cops = new LinkedList<Player>();
-        this.thieves = new LinkedList<Player>();
     }
 
     public Board(Board toCopy) {
         this.size = toCopy.size;
         this.objects = new LinkedList<BoardObject>();
-        this.players = new LinkedList<Player>();
-        this.cops = new LinkedList<Player>();
-        this.thieves = new LinkedList<Player>();
 
         for(BoardObject obj : toCopy.objects) {
             BoardObject new_obj = new BoardObject(obj);
             this.objects.add(new_obj);
         }
 
-        for(Player plr: toCopy.players) {
-            Player new_plr = new Player(plr);
-            this.players.add(new_plr);
-        }
 
-        for(Player plr: toCopy.cops) {
-            Player new_plr = new Player(plr);
-            this.cops.add(new_plr);
-        }
+        PlayerGroup newCops = new PlayerGroup(toCopy.cops);
+        this.cops = newCops;
+
 
         for(Player plr: toCopy.thieves) {
             Player new_plr = new Player(plr);

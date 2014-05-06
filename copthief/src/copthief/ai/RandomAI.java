@@ -1,54 +1,33 @@
 package copthief.ai;
 
-import copthief.engine.Board;
-import copthief.engine.Constants;
-import copthief.engine.Player;
+import copthief.engine.*;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class RandomAI extends Player {
-    public RandomAI(Constants.ObjectTypes ttype, int ttimeLimit) {
-        if(ttype == Constants.ObjectTypes.COP) {
-            this.type = ttype;
-        } else {
-            this.type = Constants.ObjectTypes.THIEF;
-        }
-        this.moves = new LinkedList<Constants.Direction>();
-    }
-
-    public RandomAI(int ttimelimit) {
-        this.type = Constants.ObjectTypes.THIEF;
-        this.moves = new LinkedList<Constants.Direction>();
-    }
-
-    public RandomAI(Constants.ObjectTypes ttype) {
-        if(ttype == Constants.ObjectTypes.COP) {
-            this.type = ttype;
-        } else {
-            this.type = Constants.ObjectTypes.THIEF;
-        }
-        this.moves = new LinkedList<Constants.Direction>();
-    }
-
+public class RandomAI extends PlayerGroup {
     public RandomAI() {
-        this.type = Constants.ObjectTypes.THIEF;
-        this.moves = new LinkedList<Constants.Direction>();
+        super();
     }
 
-    public RandomAI(Player toCopy) {
-        this.type = toCopy.getType();
-        this.moves = new LinkedList<Constants.Direction>();
+    public RandomAI(PlayerGroup toCopy) {
+        super(toCopy);
     }
 
-    public void prepareMove(List<Board> stateList, int k) {
-        Random rand = new Random();
+    public RandomAI(Constants.ObjectTypes groupType, int objectsCount) {
+        super(groupType, objectsCount);
+    }
 
-        for (int i=0; i<k; i++) {
-            int value = rand.nextInt(5);
-            this.moves.add(Constants.Direction.fromInteger(value));
+    public void run() {
+        RandomSingleton rand = RandomSingleton.getInstance();
+
+        for(Player plr : this.players) {
+            for (int i=0; i<k; i++) {
+                int value = rand.nextInt(5);
+                plr.setMove(Constants.Direction.fromInteger(value));
+            }
+
         }
-
     }
 }

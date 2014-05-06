@@ -1,5 +1,6 @@
 package copthief.engine;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ public class Player {
     protected Constants.ObjectTypes type;
     protected LinkedList<Constants.Direction> moves;
     protected int posX, posY;
+    protected final Object guardian = new Object();
 
     public Player(Constants.ObjectTypes ttype) {
         if(ttype == Constants.ObjectTypes.COP) {
@@ -30,10 +32,18 @@ public class Player {
     }
 
     public Constants.Direction getMove() {
-        if(this.moves.size() > 0) {
-            return this.moves.remove();
-        } else {
-            return Constants.Direction.STAY;
+        synchronized (guardian) {
+            if (this.moves.size() > 0) {
+                return this.moves.remove();
+            } else {
+                return Constants.Direction.STAY;
+            }
+        }
+    }
+
+    public void setMove(Constants.Direction move) {
+        synchronized (guardian) {
+            this.moves.add(move);
         }
     }
 
@@ -71,8 +81,8 @@ public class Player {
         return this.type;
     }
 
-    public void prepareMove(List<Board> stateList, int k) {
-        //1 - up, 2 - down, 3 - right, 4 - left, 0 - stay
-        //must fill moves list
-    }
+//    public void prepareMove(List<Board> stateList, int k) {
+//        //1 - up, 2 - down, 3 - right, 4 - left, 0 - stay
+//        //must fill moves list
+//    }
 }
