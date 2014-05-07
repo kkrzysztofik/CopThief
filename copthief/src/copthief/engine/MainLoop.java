@@ -1,10 +1,10 @@
 package copthief.engine;
 
-import copthief.ai.RandomAI;
+import copthief.ai.CopAI;
+import copthief.ai.ThiefAI;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 public class MainLoop {
     private int T;
@@ -154,7 +154,7 @@ public class MainLoop {
         }
 
         //RandomAI for now
-        PlayerGroup copGrp = new RandomAI(Constants.ObjectTypes.COP, this.cops);
+        PlayerGroup copGrp = new CopAI(Constants.ObjectTypes.COP, this.cops);
 
         for(int i = 0; i<cops; i++) {
             Player cop = new Player(Constants.ObjectTypes.COP);
@@ -175,7 +175,7 @@ public class MainLoop {
 
         ///////////////////////////
 
-        PlayerGroup thfGrp = new RandomAI(Constants.ObjectTypes.THIEF, this.thieves);
+        PlayerGroup thfGrp = new ThiefAI(Constants.ObjectTypes.THIEF, this.thieves);
 
         for(int i = 0; i<thieves; i++) {
             Player thief = new Player(Constants.ObjectTypes.THIEF);
@@ -227,19 +227,29 @@ public class MainLoop {
         Thread copThrd = new Thread(gameBoard.cops);
         long t1 = System.currentTimeMillis();
 
-        copThrd.run();
+        copThrd.start();
+        try {
+            copThrd.join(500);
+        } catch (InterruptedException ex) {
+
+        }
 
         List<Board> thievesList = new LinkedList<Board>();
 
         for(Board b : lastList) {
             thievesList.add(new Board(b));
         }
+        System.out.println(thievesList.size());
 
         gameBoard.thieves.states = thievesList;
         Thread thvThrd = new Thread(gameBoard.thieves);
 
-        thvThrd.run();
+        thvThrd.start();
+        try {
+            copThrd.join(500);
+        } catch (InterruptedException ex){
 
+        }
     }
 
     private void makeMove() throws GameEndException {

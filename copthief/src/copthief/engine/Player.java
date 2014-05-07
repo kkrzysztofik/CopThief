@@ -32,13 +32,15 @@ public class Player {
     }
 
     public Constants.Direction getMove() {
+        Constants.Direction toRet;
         synchronized (guardian) {
             if (this.moves.size() > 0) {
-                return this.moves.remove();
+                toRet = this.moves.remove();
             } else {
-                return Constants.Direction.STAY;
+                toRet = Constants.Direction.STAY;
             }
         }
+        return toRet;
     }
 
     public void setMove(Constants.Direction move) {
@@ -80,9 +82,4 @@ public class Player {
     public Constants.ObjectTypes getType() {
         return this.type;
     }
-
-//    public void prepareMove(List<Board> stateList, int k) {
-//        //1 - up, 2 - down, 3 - right, 4 - left, 0 - stay
-//        //must fill moves list
-//    }
 }

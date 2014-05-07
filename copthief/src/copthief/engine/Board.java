@@ -1,6 +1,8 @@
 package copthief.engine;
 
-import java.io.Console;
+import copthief.ai.CopAI;
+import copthief.ai.ThiefAI;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,15 +62,8 @@ public class Board {
             this.objects.add(new_obj);
         }
 
-
-        PlayerGroup newCops = new PlayerGroup(toCopy.cops);
-        this.cops = newCops;
-
-
-        for(Player plr: toCopy.thieves) {
-            Player new_plr = new Player(plr);
-            this.thieves.add(new_plr);
-        }
+        this.cops = new CopAI(toCopy.cops);
+        this.thieves = new ThiefAI(toCopy.thieves);
 
         this.board = new Constants.ObjectTypes[size][size];
 
@@ -125,17 +120,21 @@ public class Board {
                     }
                 }
             }
-
-            for(Player plr : players) {
-                Constants.ObjectTypes type = plr.getType();
-                int posX = plr.getPosX(),
-                    posY = plr.getPosY();
-                board[posX][posY] = type;
-                if(posX == 0 || posX == size-1) {
-                    System.out.println("PosX WTF?");
+            if(this.thieves != null) {
+                for(Player plr : this.thieves.players) {
+                    Constants.ObjectTypes type = plr.getType();
+                    int posX = plr.getPosX(),
+                            posY = plr.getPosY();
+                    board[posX][posY] = type;
                 }
-                if(posY == 0 || posY == size-1) {
-                    System.out.println("PosY WTF?");
+            }
+
+            if(this.cops != null) {
+                for (Player plr : this.cops.players) {
+                    Constants.ObjectTypes type = plr.getType();
+                    int posX = plr.getPosX(),
+                            posY = plr.getPosY();
+                    board[posX][posY] = type;
                 }
             }
         } catch (ArrayIndexOutOfBoundsException ex) {
@@ -150,11 +149,6 @@ public class Board {
 
     public void setObjects(List<BoardObject> objects) {
         this.objects = objects;
-        refreshBoard();
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
         refreshBoard();
     }
 

@@ -31,6 +31,7 @@ public abstract class PlayerGroup implements Runnable {
     public PlayerGroup(Constants.ObjectTypes groupType, int objectsCount) {
         this.objectsCount = objectsCount;
         this.groupType = groupType;
+        this.players = new LinkedList<Player>();
     }
 
     public PlayerGroup(PlayerGroup toCopy) {
@@ -44,9 +45,11 @@ public abstract class PlayerGroup implements Runnable {
         }
 
         this.states = new LinkedList<Board>();
-        for(Board brd : toCopy.states) {
-            Board tmpBoard = new Board(brd);
-            this.states.add(tmpBoard);
+        if(toCopy.states != null) {
+            for (Board brd : toCopy.states) {
+                Board tmpBoard = new Board(brd);
+                this.states.add(tmpBoard);
+            }
         }
     }
 

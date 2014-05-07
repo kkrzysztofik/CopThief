@@ -1,21 +1,20 @@
 package copthief.ai;
 
-import copthief.engine.*;
+import copthief.engine.Constants;
+import copthief.engine.Player;
+import copthief.engine.PlayerGroup;
+import copthief.engine.RandomSingleton;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
-public class RandomAI extends PlayerGroup {
-    public RandomAI() {
+public class ThiefAI extends PlayerGroup {
+    public ThiefAI() {
         super();
     }
 
-    public RandomAI(PlayerGroup toCopy) {
+    public ThiefAI(PlayerGroup toCopy) {
         super(toCopy);
     }
 
-    public RandomAI(Constants.ObjectTypes groupType, int objectsCount) {
+    public ThiefAI(Constants.ObjectTypes groupType, int objectsCount) {
         super(groupType, objectsCount);
     }
 
