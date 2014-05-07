@@ -10,7 +10,6 @@ public class Player {
     protected LinkedList<Constants.Direction> moves;
 
     protected int posX, posY;
-    protected final Object guardian = new Object();
 
     public Player(Constants.ObjectTypes ttype) {
         if(ttype == Constants.ObjectTypes.COP) {
@@ -33,9 +32,9 @@ public class Player {
         this.moves = new LinkedList<Constants.Direction>();
     }
 
-    public Constants.Direction getMove() {
+    public synchronized Constants.Direction getMove() {
         Constants.Direction toRet;
-        synchronized (guardian) {
+        synchronized (this) {
             if (this.moves.size() > 0) {
                 toRet = this.moves.remove();
             } else {
@@ -45,9 +44,9 @@ public class Player {
         return toRet;
     }
 
-    public void setMove(Constants.Direction move) {
-        synchronized (guardian) {
-            this.moves.add(move);
+    public synchronized void setMoves(LinkedList<Constants.Direction> moves) {
+        synchronized (this) {
+            this.moves = new LinkedList<Constants.Direction>(moves);
         }
     }
 
