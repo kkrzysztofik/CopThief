@@ -10,7 +10,7 @@ public abstract class PlayerGroup implements Runnable {
     public int objectsCount;
     public int k;
     public Constants.ObjectTypes groupType;
-    public boolean stopExecution;
+    public volatile boolean stopExecution;
 
     public void setStates(List<Board> newStates) {
         this.states = newStates;
@@ -23,6 +23,7 @@ public abstract class PlayerGroup implements Runnable {
     public void setExecution(boolean flag) {
         this.stopExecution = flag;
     }
+    public void cancel() { Thread.currentThread().interrupt(); }
 
     public PlayerGroup() {
 

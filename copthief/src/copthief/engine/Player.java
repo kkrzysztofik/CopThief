@@ -6,7 +6,9 @@ import java.util.List;
 
 public class Player {
     protected Constants.ObjectTypes type;
+
     protected LinkedList<Constants.Direction> moves;
+
     protected int posX, posY;
     protected final Object guardian = new Object();
 

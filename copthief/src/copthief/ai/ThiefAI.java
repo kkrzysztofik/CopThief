@@ -20,13 +20,14 @@ public class ThiefAI extends PlayerGroup {
 
     public void run() {
         RandomSingleton rand = RandomSingleton.getInstance();
+        while(!Thread.currentThread().isInterrupted()) {
+            for (Player plr : this.players) {
+                for (int i = 0; i < k; i++) {
+                    int value = rand.nextInt(5);
+                    plr.setMove(Constants.Direction.fromInteger(value));
+                }
 
-        for(Player plr : this.players) {
-            for (int i=0; i<k; i++) {
-                int value = rand.nextInt(5);
-                plr.setMove(Constants.Direction.fromInteger(value));
             }
-
         }
     }
 }
