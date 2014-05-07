@@ -62,8 +62,8 @@ public class Board {
             this.objects.add(new_obj);
         }
 
-        this.cops = new CopAI(toCopy.cops);
-        this.thieves = new ThiefAI(toCopy.thieves);
+//        this.cops = new CopAI(toCopy.cops);
+//        this.thieves = new ThiefAI(toCopy.thieves);
 
         this.board = new Constants.ObjectTypes[size][size];
 
