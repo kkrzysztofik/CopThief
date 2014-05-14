@@ -155,7 +155,8 @@ public class MainLoop {
 
         //RandomAI for now
         PlayerGroup copGrp = new CopAI(Constants.ObjectTypes.COP, this.cops);
-
+        copGrp.k = this.k;
+        
         for(int i = 0; i<cops; i++) {
             Player cop = new Player(Constants.ObjectTypes.COP);
             int posX = rnd.nextInt(this.boardWidth)+1,
@@ -176,7 +177,8 @@ public class MainLoop {
         ///////////////////////////
 
         PlayerGroup thfGrp = new ThiefAI(Constants.ObjectTypes.THIEF, this.thieves);
-
+        thfGrp.k = this.k;
+        
         for(int i = 0; i<thieves; i++) {
             Player thief = new Player(Constants.ObjectTypes.THIEF);
             int posX = rnd.nextInt(this.boardWidth)+1,
@@ -359,6 +361,7 @@ public class MainLoop {
 
         for(Player plr: gameBoard.cops.players){
             Constants.Direction movement = plr.getMove();
+            System.out.println("COP" + movement);
             Constants.ObjectTypes plrType = plr.getType();
             int posX = plr.getPosX(),
                 posY = plr.getPosY();
@@ -403,6 +406,7 @@ public class MainLoop {
 
         for(Player plr: gameBoard.thieves.players){
             Constants.Direction movement = plr.getMove();
+            System.out.println("THIEF: " + movement);
             Constants.ObjectTypes plrType = plr.getType();
             int posX = plr.getPosX(),
                     posY = plr.getPosY();

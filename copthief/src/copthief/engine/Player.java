@@ -34,20 +34,17 @@ public class Player {
 
     public synchronized Constants.Direction getMove() {
         Constants.Direction toRet;
-        synchronized (this) {
-            if (this.moves.size() > 0) {
-                toRet = this.moves.remove();
-            } else {
-                toRet = Constants.Direction.STAY;
-            }
+        if (this.moves.size() > 0) {
+            toRet = this.moves.remove();
+        } else {
+            toRet = Constants.Direction.STAY;
         }
         return toRet;
     }
 
     public synchronized void setMoves(LinkedList<Constants.Direction> moves) {
-        synchronized (this) {
-            this.moves = new LinkedList<Constants.Direction>(moves);
-        }
+        this.moves = new LinkedList<Constants.Direction>(moves);
+        System.out.println("Setter");
     }
 
     public void setPos(int posX, int posY) {

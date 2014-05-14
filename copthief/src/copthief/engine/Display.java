@@ -87,7 +87,7 @@ public class Display extends Frame
 
         private void drawLocation(int x, int y, NamedImage ni, char letter)
         {
-            Rectangle r = rectForLocation(y, x);
+            Rectangle r = rectForLocation(21-x, y);
             checkImage();
 
             if (ni == null || ni.isBackgroundImage)
