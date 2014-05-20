@@ -45,13 +45,13 @@ public abstract class PlayerGroup implements Runnable {
             this.players.add(tmpPlayer);
         }
 
-        this.states = new LinkedList<Board>();
-        if(toCopy.states != null) {
-            for (Board brd : toCopy.states) {
-                Board tmpBoard = new Board(brd);
-                this.states.add(tmpBoard);
-            }
-        }
+//        this.states = new LinkedList<Board>();
+//        if(toCopy.states != null) {
+//            for (Board brd : toCopy.states) {
+//                Board tmpBoard = new Board(brd);
+//                this.states.add(tmpBoard);
+//            }
+//        }
     }
 
     public abstract void run();
