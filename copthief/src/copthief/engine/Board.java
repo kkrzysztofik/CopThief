@@ -74,22 +74,22 @@ public class Board {
         }
     }
 
-    public void moveFromCollision(Player plr, int posX, int posY) throws GameEndException {
-        Constants.ObjectTypes plrType = plr.getType();
-
-        if (!this.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType)){
-            plr.move(Constants.Direction.RIGHT);
-        } else if (!this.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType)) {
-            plr.move(Constants.Direction.LEFT);
-        } else if (!this.checkIfCollide(Constants.Direction.UP, posX, posY, plrType)) {
-            plr.move(Constants.Direction.UP);
-        } else if (!this.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType)) {
-            plr.move(Constants.Direction.DOWN);
-        } else {
-            throw new GameEndException("Cannot move anywhere and still in collision!");
-//                                plr.moveRandom(posX, posY, gameBoard.getSize());
-        }
-    }
+//    public void moveFromCollision(Player plr, int posX, int posY) throws GameEndException {
+//        Constants.ObjectTypes plrType = plr.getType();
+//
+//        if (!this.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType)){
+//            plr.move(Constants.Direction.RIGHT);
+//        } else if (!this.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType)) {
+//            plr.move(Constants.Direction.LEFT);
+//        } else if (!this.checkIfCollide(Constants.Direction.UP, posX, posY, plrType)) {
+//            plr.move(Constants.Direction.UP);
+//        } else if (!this.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType)) {
+//            plr.move(Constants.Direction.DOWN);
+//        } else {
+//            throw new GameEndException("Cannot move anywhere and still in collision!");
+////                                plr.moveRandom(posX, posY, gameBoard.getSize());
+//        }
+//    }
 
     public void refreshBoard() {
         try {
@@ -152,7 +152,7 @@ public class Board {
         refreshBoard();
     }
 
-    public boolean checkIfCollide(Constants.Direction direction, int startX, int startY, Constants.ObjectTypes type) {
+    public boolean checkIfCollide(Constants.Direction direction, int startX, int startY, Constants.ObjectTypes type, int objSizeX, int objSizeY) {
         int new_posX = 0, new_posY = 0;
 
         switch (direction) {
@@ -179,6 +179,14 @@ public class Board {
         }
         if(new_posX >= this.size -1 || new_posY >= this.size -1 || new_posX < 1 || new_posY < 1) {
             return true; //Cannot exceed board
+        }
+
+        for(int i = 0; i < objSizeX; i++){
+            for(int j = 0; j < objSizeY; j++) {
+                if(board[new_posX+i][new_posY+j] == Constants.ObjectTypes.THIEF || board[new_posX][new_posY] == Constants.ObjectTypes.COP) {
+                    return true;
+                }
+            }
         }
 
         if(board[new_posX][new_posY] == Constants.ObjectTypes.GATEWAY && type == Constants.ObjectTypes.COP) {

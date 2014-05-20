@@ -156,13 +156,14 @@ public class MainLoop {
         //RandomAI for now
         PlayerGroup copGrp = new CopAI(Constants.ObjectTypes.COP, this.cops);
         copGrp.k = this.k;
-        
+
         for(int i = 0; i<cops; i++) {
             Player cop = new Player(Constants.ObjectTypes.COP);
+            int sizeX = 1, sizeY = 1;
             int posX = rnd.nextInt(this.boardWidth)+1,
                 posY = rnd.nextInt(this.boardWidth)+1;
 
-            while(gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.COP)) { // until collides randomise new values
+            while(gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.COP, sizeX, sizeY)) { // until collides randomise new values
                 posX = rnd.nextInt(this.boardWidth)+1;
                 posY = rnd.nextInt(this.boardWidth)+1;
             }
@@ -178,13 +179,15 @@ public class MainLoop {
 
         PlayerGroup thfGrp = new ThiefAI(Constants.ObjectTypes.THIEF, this.thieves);
         thfGrp.k = this.k;
-        
+
         for(int i = 0; i<thieves; i++) {
             Player thief = new Player(Constants.ObjectTypes.THIEF);
+            int sizeX = 1, sizeY = 1;
+
             int posX = rnd.nextInt(this.boardWidth)+1,
                 posY = rnd.nextInt(this.boardWidth)+1;
 
-            while(gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.THIEF)) {
+            while(gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, Constants.ObjectTypes.THIEF, sizeX, sizeY)) {
                 posX = rnd.nextInt(this.boardWidth)+1;
                 posY = rnd.nextInt(this.boardWidth)+1;
             }
@@ -259,27 +262,36 @@ public class MainLoop {
 
         for(BoardObject obj : gameBoard.objects){
             Constants.Direction movement = obj.getMove();
+            Constants.ObjectTypes objType = obj.getType();
             int posX = obj.getPosX(),
                 posY = obj.getPosY(),
                 sizeX = obj.getSizeX(),
                 sizeY = obj.getSizeY();
 
-            if(obj.getType() == Constants.ObjectTypes.WALL) { //wall
+            if(objType == Constants.ObjectTypes.WALL) { //wall
                 switch (movement) {
                     case STAY:
                         //do nothing
                         break;
                     case UP:
-                        obj.setPos(posX, posY+1);
+                        if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, objType, sizeX, sizeY)) {
+                            obj.setPos(posX, posY + 1);
+                        }
                         break;
                     case DOWN:
-                        obj.setPos(posX, posY-1);
+                        if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, objType, sizeX, sizeY)) {
+                            obj.setPos(posX, posY - 1);
+                        }
                         break;
                     case LEFT:
-                        obj.setPos(posX-1, posY);
+                        if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, objType, sizeX, sizeY)) {
+                            obj.setPos(posX - 1, posY);
+                        }
                         break;
                     case RIGHT:
-                        obj.setPos(posX+1, posY);
+                        if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, objType, sizeX, sizeY)) {
+                            obj.setPos(posX + 1, posY);
+                        }
                         break;
                 }
                 // check if collide with players
@@ -364,41 +376,31 @@ public class MainLoop {
             System.out.println("COP" + movement);
             Constants.ObjectTypes plrType = plr.getType();
             int posX = plr.getPosX(),
-                posY = plr.getPosY();
-            boolean stay_collide = gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, plrType);
+                posY = plr.getPosY(),
+                sizeX = 1,
+                sizeY = 1;
 
             switch (movement) {
                 case STAY:
-                    if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
-                    }
                     break;
                 case UP:
-                    if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, plrType)) {
+                    if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, plrType, sizeX, sizeY)) {
                         plr.move(Constants.Direction.UP);
-                    } else if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case DOWN:
-                    if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType)) {
+                    if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType, sizeX, sizeY)) {
                         plr.move(Constants.Direction.DOWN);
-                    } else if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case RIGHT:
-                    if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType)) {
+                    if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType, sizeX, sizeY)) {
                         plr.move(Constants.Direction.RIGHT);
-                    } else if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case LEFT:
-                    if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType)) {
+                    if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType, sizeX, sizeY)) {
                         plr.move(Constants.Direction.LEFT);
-                    } else if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
             }
@@ -409,41 +411,31 @@ public class MainLoop {
             System.out.println("THIEF: " + movement);
             Constants.ObjectTypes plrType = plr.getType();
             int posX = plr.getPosX(),
-                    posY = plr.getPosY();
-            boolean stay_collide = gameBoard.checkIfCollide(Constants.Direction.STAY, posX, posY, plrType);
+                posY = plr.getPosY(),
+                sizeX = 1,
+                sizeY = 1;
 
             switch (movement) {
                 case STAY:
-                    if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
-                    }
                     break;
                 case UP:
-                    if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, plrType)) {
+                    if(!gameBoard.checkIfCollide(Constants.Direction.UP, posX, posY, plrType, sizeX, sizeY)) {
                         plr.move(Constants.Direction.UP);
-                    } else if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case DOWN:
-                    if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType)) {
+                    if(!gameBoard.checkIfCollide(Constants.Direction.DOWN, posX, posY, plrType, sizeX, sizeY)) {
                         plr.move(Constants.Direction.DOWN);
-                    } else if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case RIGHT:
-                    if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType)) {
+                    if(!gameBoard.checkIfCollide(Constants.Direction.RIGHT, posX, posY, plrType, sizeX, sizeY)) {
                         plr.move(Constants.Direction.RIGHT);
-                    } else if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
                 case LEFT:
-                    if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType)) {
+                    if(!gameBoard.checkIfCollide(Constants.Direction.LEFT, posX, posY, plrType, sizeX, sizeY)) {
                         plr.move(Constants.Direction.LEFT);
-                    } else if(stay_collide){
-                        gameBoard.moveFromCollision(plr, posX, posY);
                     }
                     break;
             }
