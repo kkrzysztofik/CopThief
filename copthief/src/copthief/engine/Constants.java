@@ -11,6 +11,11 @@ public class Constants {
             return constList[x];
         }
     }
+
+    public static enum GameEndStates {
+        BUSTED, RUN, TIMEOUT;
+    }
+
     public static enum ObjectTypes {
         EMPTY, WALL, GATEWAY, THIEF, COP
     }

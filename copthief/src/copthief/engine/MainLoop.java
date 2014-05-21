@@ -43,6 +43,9 @@ public class MainLoop {
     private Display gameDisp;
     private int drawID = 0;
 
+    private Constants.GameEndStates endState = Constants.GameEndStates.TIMEOUT;
+    private int copPayout = 0, thiefPayout = 0;
+
     public MainLoop(String thievesEngine, String copEngine){
         this.T = 250;
         this.currentT = 0;
@@ -454,11 +457,33 @@ public class MainLoop {
                 double dist = Math.sqrt(Math.pow(thfX-copX, 2) + Math.pow(thfY-copY, 2));
 
                 if(dist <= copRange) {
+                    endState = Constants.GameEndStates.BUSTED;
                     throw new GameEndException("Thief busted!");
                 }
             }
 
+//            for(BoardObject obj: gameBoard.objects) {
+//                int objX = obj.getPosX(),
+//                    objY = obj.getPosY(),
+//                    sizeX = obj.getSizeX(),
+//                    sizeY = obj.getSizeY();
+//                Constants.ObjectTypes objType = obj.getType();
+//
+//                if(objType != Constants.ObjectTypes.GATEWAY) {
+//                    continue;
+//                }
+//
+//                for(int i = 0; i < sizeX; i++) {
+//                    for(int j = 0; j < sizeY; j++) {
+//                       if(thfX == objX+i && thfY == objY+j) {
+//                           throw new GameEndException("Thief run!");
+//                       }
+//                    }
+//                }
+//            }
+
             if (thfX <= 0 || thfX >= boardSize - 1 || thfY <= 0 || thfY >= boardSize-1){
+                endState = Constants.GameEndStates.RUN;
                 throw new GameEndException("Thief run!");
             }
         }
@@ -559,6 +584,24 @@ public class MainLoop {
 
         System.out.println(this.print());
         System.out.println("Seed: " + RandomSingleton.getSeed());
+
+        switch (endState) {
+            case RUN:
+                thiefPayout = 2*T - currentT - 1;
+                break;
+            case BUSTED:
+                thiefPayout = currentT;
+                break;
+            case TIMEOUT:
+                thiefPayout = T;
+                break;
+        }
+
+        copPayout = -thiefPayout;
+
+        System.out.println("Payout:");
+        System.out.println("- thief: " + thiefPayout);
+        System.out.println("- cop: " + copPayout);
 
         Boolean redraw = true;
         while(true) {
